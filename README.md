@@ -1,6 +1,6 @@
 
 <h1>
-    <img src="./application/src/assets/icon-comprimido.png" width="50" height="50">
+    <img src="./document/assets/icon-main.png" width="50" height="50">
     Pharmacy-system-frontend
 </h1>
 
