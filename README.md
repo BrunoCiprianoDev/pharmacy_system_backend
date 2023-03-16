@@ -1,7 +1,7 @@
 
 <h1>
     <img src="./documents/assets/icon-main.png" width="50" height="50">
-    Pharmacy-system-frontend
+    Pharmacy-system-backend
 </h1>
 
 
