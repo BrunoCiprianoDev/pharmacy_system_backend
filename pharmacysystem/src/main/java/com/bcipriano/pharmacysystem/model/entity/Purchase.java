@@ -1,41 +1,42 @@
-package com.bcipriano.pharmacysystem.models.entities;
+package com.bcipriano.pharmacysystem.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "client", schema = "management")
+@Table(name = "purchase", schema = "management")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Client {
+public class Purchase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "cpf")
-    private String cpf;
-
-    @Column(name = "born_date")
+    @Column(name = "purchase_date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
-    private LocalDate bornDate;
+    private LocalDate purchaseDate;
 
-    @Column(name = "phone")
-    private String phone;
+    @Column(name = "note_number")
+    private String noteNumber;
 
-    @Column(name = "email")
-    private String email;
+    private BigDecimal total;
+
+    @ManyToOne
+    @JoinColumn(name = "id_supplier")
+    private Supplier supplier;
+
 
 }

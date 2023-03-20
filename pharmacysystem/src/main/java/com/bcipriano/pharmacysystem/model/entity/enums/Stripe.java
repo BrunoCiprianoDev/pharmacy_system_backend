@@ -1,4 +1,4 @@
-package com.bcipriano.pharmacysystem.models.enums;
+package com.bcipriano.pharmacysystem.model.entity.enums;
 
 public enum Stripe {
     RED,

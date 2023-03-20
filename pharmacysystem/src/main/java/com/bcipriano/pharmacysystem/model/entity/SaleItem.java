@@ -1,4 +1,4 @@
-package com.bcipriano.pharmacysystem.models.entities;
+package com.bcipriano.pharmacysystem.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,13 +18,11 @@ public class SaleItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "units")
     private Integer units;
 
-    @Column(name = "sellPrice")
+    @Column(name = "sell_price")
     private BigDecimal sellPrice;
 
     @ManyToOne

@@ -1,4 +1,4 @@
-package com.bcipriano.pharmacysystem.models.entities;
+package com.bcipriano.pharmacysystem.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,27 +10,27 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "return", schema = "management")
+@Table(name = "client", schema = "management")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Return {
+public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "register_date")
+    private String name;
+
+    private String cpf;
+
+    @Column(name = "born_date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
-    private LocalDate registerDate;
+    private LocalDate bornDate;
 
-    @Column(name = "description")
-    private String description;
+    private String phone;
 
-    @ManyToOne
-    @JoinColumn(name = "sale_item")
-    private SaleItem saleItem;
+    private String email;
 
 }

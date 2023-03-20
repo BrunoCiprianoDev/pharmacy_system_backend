@@ -1,4 +1,4 @@
-package com.bcipriano.pharmacysystem.models.entities;
+package com.bcipriano.pharmacysystem.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,14 +19,12 @@ public class Loss {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Column(name = "register_date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate registerDate;
 
-    @Column(name = "units")
     private Integer units;
 
     @ManyToOne
@@ -37,7 +35,6 @@ public class Loss {
     @JoinColumn(name = "id_employee")
     private Employee employee;
 
-    @Column(name = "description")
     private String description;
 
 }

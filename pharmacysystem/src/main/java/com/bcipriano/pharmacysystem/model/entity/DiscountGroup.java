@@ -1,4 +1,4 @@
-package com.bcipriano.pharmacysystem.models.entities;
+package com.bcipriano.pharmacysystem.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,34 +7,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "lot", schema = "management")
+@Table(name = "discount_group", schema = "management")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Lot {
+public class DiscountGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "expirationDate")
+    @Column(name ="start_date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
-    private LocalDate expirationDate;
+    private LocalDate startDate;
 
-    @ManyToOne
-    @JoinColumn(name = "id_purchase")
-    private Purchase purchase;
+    @Column(name ="final_date")
+    @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
+    private LocalDate finalDate;
 
-    @ManyToOne
-    @JoinColumn(name = "id_merchandise")
-    private Merchandise merchandise;
+    private BigDecimal percentage;
 
-    @Column(name = "units")
-    private Integer units;
+    @Column(name = "minimum_units")
+    private Integer minimumUnits;
 
 }

@@ -1,4 +1,4 @@
-package com.bcipriano.pharmacysystem.models.entities;
+package com.bcipriano.pharmacysystem.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,14 +20,12 @@ public class Sale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Column(name = "sale_date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate saleDate;
 
-    @Column(name = "total")
     private BigDecimal total;
 
     @ManyToOne

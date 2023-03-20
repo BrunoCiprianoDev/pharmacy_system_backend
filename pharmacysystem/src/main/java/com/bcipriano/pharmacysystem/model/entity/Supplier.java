@@ -1,4 +1,4 @@
-package com.bcipriano.pharmacysystem.models.entities;
+package com.bcipriano.pharmacysystem.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,40 +15,30 @@ import lombok.NoArgsConstructor;
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "cnpj")
     private String cnpj;
 
-    @Column(name = "uf")
     private String uf;
 
-    @Column(name = "city")
     private String city;
 
-    @Column(name = "neightborhood")
     private String neightborhood;
 
-    @Column(name = "address")
     private String address;
 
-    @Column(name = "number")
     private String number;
 
-    @Column(name = "complement")
     private String complement;
 
-    @Column(name = "primaryPhone")
+    @Column(name = "primary_phone")
     private String primaryPhone;
 
-    @Column(name = "secundaryPhone")
+    @Column(name = "secundary_phone")
     private String secondaryPhone;
 
-    @Column(name = "email")
     private String email;
 
 }
