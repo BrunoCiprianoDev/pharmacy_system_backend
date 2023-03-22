@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -31,7 +30,7 @@ public class DiscountGroup {
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate finalDate;
 
-    private BigDecimal percentage;
+    private Double percentage;
 
     @Column(name = "minimum_units")
     private Integer minimumUnits;

@@ -26,7 +26,7 @@ public class Sale {
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate saleDate;
 
-    private BigDecimal total;
+    private Double total;
 
     @ManyToOne
     @JoinColumn(name = "id_employee")

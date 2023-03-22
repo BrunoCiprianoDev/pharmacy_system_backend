@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -32,11 +31,10 @@ public class Purchase {
     @Column(name = "note_number")
     private String noteNumber;
 
-    private BigDecimal total;
+    private Double total;
 
     @ManyToOne
     @JoinColumn(name = "id_supplier")
     private Supplier supplier;
-
 
 }

@@ -22,6 +22,8 @@ public class Lot {
     @Column(name = "id")
     private Long id;
 
+    private String number;
+
     @Column(name = "expiration_date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate expirationDate;

@@ -23,7 +23,7 @@ public class SaleItem {
     private Integer units;
 
     @Column(name = "sell_price")
-    private BigDecimal sellPrice;
+    private Double sellPrice;
 
     @ManyToOne
     @JoinColumn(name = "id_sale")
