@@ -1,6 +1,7 @@
 package com.bcipriano.pharmacysystem.api.dto;
 
 import com.bcipriano.pharmacysystem.model.entity.Supplier;
+import com.bcipriano.pharmacysystem.model.entity.enums.Address;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,17 +16,7 @@ public class SupplierDTO {
 
     private String name;
 
-    private String uf;
-
-    private String city;
-
-    private String neightborhood;
-
-    private String address;
-
-    private String number;
-
-    private String complement;
+    private Address address;
 
     private String primaryPhone;
 

@@ -22,6 +22,8 @@ public class DiscountGroup {
     @Column(name = "id")
     private Long id;
 
+    private String name;
+
     @Column(name ="start_date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate startDate;
@@ -34,5 +36,7 @@ public class DiscountGroup {
 
     @Column(name = "minimum_units")
     private Integer minimumUnits;
+
+    private String description;
 
 }

@@ -22,8 +22,6 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
     @Column(name = "purchase_date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate purchaseDate;

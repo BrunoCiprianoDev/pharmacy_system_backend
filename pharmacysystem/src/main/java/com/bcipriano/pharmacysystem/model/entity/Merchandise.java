@@ -57,7 +57,7 @@ public class Merchandise {
 
     private Double comission;
 
-    private String pmc;
+    private Double pmc;
 
     private String description;
     @ManyToOne

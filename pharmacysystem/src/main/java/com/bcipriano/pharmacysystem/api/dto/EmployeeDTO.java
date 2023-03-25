@@ -1,6 +1,7 @@
 package com.bcipriano.pharmacysystem.api.dto;
 
 import com.bcipriano.pharmacysystem.model.entity.Employee;
+import com.bcipriano.pharmacysystem.model.entity.enums.Address;
 import com.bcipriano.pharmacysystem.model.entity.enums.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,13 +23,7 @@ public class EmployeeDTO {
 
     private LocalDate bornDate;
 
-    private String city;
-
-    private String neightborhood;
-
-    private String address;
-
-    private String number;
+    private Address address;
 
     private String primaryPhone;
 

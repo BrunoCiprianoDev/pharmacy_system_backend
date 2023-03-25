@@ -1,5 +1,6 @@
 package com.bcipriano.pharmacysystem.model.entity;
 
+import com.bcipriano.pharmacysystem.model.entity.enums.Address;
 import com.bcipriano.pharmacysystem.model.entity.enums.Profile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -30,17 +31,9 @@ public class Employee {
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate bornDate;
 
-    private String cep;
-
-    private String city;
-
-    private String neightborhood;
-
-    private String address;
-
-    private String number;
-
-    private String complement;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "id_address")
+    private Address address;
 
     @Column(name = "primary_phone")
     private String primaryPhone;

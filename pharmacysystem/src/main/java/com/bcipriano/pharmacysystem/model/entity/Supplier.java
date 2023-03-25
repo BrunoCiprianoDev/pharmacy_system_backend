@@ -1,5 +1,6 @@
 package com.bcipriano.pharmacysystem.model.entity;
 
+import com.bcipriano.pharmacysystem.model.entity.enums.Address;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,23 +22,15 @@ public class Supplier {
 
     private String cnpj;
 
-    private String uf;
-
-    private String city;
-
-    private String neightborhood;
-
-    private String address;
-
-    private String number;
-
-    private String complement;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "id_address")
+    private Address address;
 
     @Column(name = "primary_phone")
     private String primaryPhone;
 
     @Column(name = "secundary_phone")
-    private String secondaryPhone;
+    private String secundaryPhone;
 
     private String email;
 

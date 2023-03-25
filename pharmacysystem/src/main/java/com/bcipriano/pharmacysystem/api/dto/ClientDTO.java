@@ -1,6 +1,7 @@
 package com.bcipriano.pharmacysystem.api.dto;
 
 import com.bcipriano.pharmacysystem.model.entity.Client;
+import com.bcipriano.pharmacysystem.model.entity.enums.Address;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,8 @@ public class ClientDTO {
     private String cpf;
 
     private String bornDate;
+
+    private Address address;
 
     private String phone;
 

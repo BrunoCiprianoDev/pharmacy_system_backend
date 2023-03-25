@@ -1,5 +1,6 @@
 package com.bcipriano.pharmacysystem.model.entity;
 
+import com.bcipriano.pharmacysystem.model.entity.enums.Address;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,10 @@ public class Client {
     @Column(name = "born_date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate bornDate;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "id_address")
+    private Address address;
 
     private String phone;
 
