@@ -2,7 +2,6 @@ package com.bcipriano.pharmacysystem.model.repository;
 
 import com.bcipriano.pharmacysystem.model.entity.Client;
 import org.assertj.core.api.Assertions;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
