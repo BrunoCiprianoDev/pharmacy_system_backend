@@ -17,4 +17,6 @@ public interface DiscountGroupRepository extends JpaRepository<DiscountGroup, Lo
 
     List <DiscountGroup> findByFinalDate(LocalDate finalDate);
 
+    boolean existsByName(String name);
+
 }

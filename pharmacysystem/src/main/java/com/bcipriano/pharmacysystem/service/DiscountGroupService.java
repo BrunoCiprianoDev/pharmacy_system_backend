@@ -17,8 +17,6 @@ public interface DiscountGroupService {
 
     DiscountGroup getDiscountGroupById(Long id);
 
-    List<DiscountGroup> getDiscountGroupById(String query);
-
     List<DiscountGroup> getDiscountGroupByQuery(String query);
 
     List<DiscountGroup> getDiscountGroupByStartDate(LocalDate startDate);

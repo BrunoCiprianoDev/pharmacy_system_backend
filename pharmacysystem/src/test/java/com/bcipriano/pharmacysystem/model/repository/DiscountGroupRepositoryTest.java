@@ -79,5 +79,20 @@ public class DiscountGroupRepositoryTest {
 
     }
 
+    @Test
+    public void testMustReturnTrueOrFalseByDiscountGroupName(){
+
+        String name = "Name";
+        String nameInvalid = "NameInvalid";
+
+        //Create context
+        discountGroupRepository.save(DiscountGroup.builder().name(name).build());
+
+        //Verification
+        Assertions.assertThat(discountGroupRepository.existsByName(name)).isTrue();
+        Assertions.assertThat(discountGroupRepository.existsByName(nameInvalid)).isFalse();
+
+    }
+
 
 }
