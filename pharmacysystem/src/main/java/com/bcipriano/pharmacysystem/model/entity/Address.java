@@ -1,4 +1,4 @@
-package com.bcipriano.pharmacysystem.model.entity.enums;
+package com.bcipriano.pharmacysystem.model.entity;
 
 
 import jakarta.persistence.*;

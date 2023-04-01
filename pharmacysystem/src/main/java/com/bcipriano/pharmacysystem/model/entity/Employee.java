@@ -1,6 +1,5 @@
 package com.bcipriano.pharmacysystem.model.entity;
 
-import com.bcipriano.pharmacysystem.model.entity.enums.Address;
 import com.bcipriano.pharmacysystem.model.entity.enums.Profile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

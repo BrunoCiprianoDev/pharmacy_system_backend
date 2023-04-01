@@ -6,4 +6,8 @@ public class BusinessRuleException extends RuntimeException{
         super(message);
     }
 
+    public BusinessRuleException() {
+        super("Campo inválido.");
+    }
+
 }

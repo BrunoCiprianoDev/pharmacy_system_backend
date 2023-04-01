@@ -6,8 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
+
+    boolean existsByCpf(String cpf);
 
     @Query(value = "SELECT c FROM Client c WHERE " +
             "c.email LIKE %:query% " +

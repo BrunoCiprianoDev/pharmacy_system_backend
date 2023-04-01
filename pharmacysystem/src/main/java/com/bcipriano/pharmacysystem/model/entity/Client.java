@@ -1,6 +1,5 @@
 package com.bcipriano.pharmacysystem.model.entity;
 
-import com.bcipriano.pharmacysystem.model.entity.enums.Address;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

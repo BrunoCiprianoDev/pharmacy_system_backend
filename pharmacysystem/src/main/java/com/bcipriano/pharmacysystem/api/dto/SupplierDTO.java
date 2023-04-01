@@ -1,7 +1,7 @@
 package com.bcipriano.pharmacysystem.api.dto;
 
 import com.bcipriano.pharmacysystem.model.entity.Supplier;
-import com.bcipriano.pharmacysystem.model.entity.enums.Address;
+import com.bcipriano.pharmacysystem.model.entity.Address;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

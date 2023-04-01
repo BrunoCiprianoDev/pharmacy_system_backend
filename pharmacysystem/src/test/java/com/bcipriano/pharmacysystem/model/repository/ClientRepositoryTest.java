@@ -39,4 +39,17 @@ public class ClientRepositoryTest {
         
     }
 
+    @Test
+    public void testMustReturnTrueOrFalseByCPFClient() {
+        String cpfTest = "111.111.111.11";
+        Client client = Client.builder().cpf(cpfTest).build();
+        clientRepository.save(client);
+
+        boolean result = clientRepository.existsByCpf(cpfTest);
+
+        Assertions.assertThat(result).isTrue();
+
+
+    }
+
 }
