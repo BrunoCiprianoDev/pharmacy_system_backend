@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "sale", schema = "management")
@@ -34,4 +35,7 @@ public class Sale {
     @ManyToOne
     @JoinColumn(name = "id_client")
     private Client client;
+
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SaleItem> saleItems;
 }

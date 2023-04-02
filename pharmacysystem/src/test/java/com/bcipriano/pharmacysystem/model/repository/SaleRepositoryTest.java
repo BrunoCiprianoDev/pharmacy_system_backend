@@ -3,6 +3,7 @@ package com.bcipriano.pharmacysystem.model.repository;
 import com.bcipriano.pharmacysystem.model.entity.Client;
 import com.bcipriano.pharmacysystem.model.entity.Employee;
 import com.bcipriano.pharmacysystem.model.entity.Sale;
+import com.bcipriano.pharmacysystem.model.entity.SaleItem;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +14,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -25,6 +28,9 @@ public class SaleRepositoryTest {
     SaleRepository saleRepository;
 
     @Autowired
+    SaleItemRepository saleItemRepository;
+
+    @Autowired
     EmployeeRepository employeeRepository;
 
 
@@ -32,10 +38,45 @@ public class SaleRepositoryTest {
     ClientRepository clientRepository;
 
     @Test
+    public void testMustSuccessfullySale() {
+
+        // Create context
+        Sale sale = Sale.builder().build();
+        sale.setSaleItems(Arrays.asList(SaleItem.builder().build(), SaleItem.builder().build(), SaleItem.builder().build()));
+
+        // Excecute
+        Sale saleSaved = saleRepository.save(sale);
+        Optional<Sale> result = saleRepository.findById(saleSaved.getId());
+        List<SaleItem> saleItensSaved = saleItemRepository.findAll();
+
+        // Verification
+        Assertions.assertThat(result.get()).isEqualTo(saleSaved);
+        Assertions.assertThat(saleItensSaved).hasSize(3);
+
+    }
+
+    @Test
+    public void testDeleteCascade(){
+
+        // Create context
+        Sale sale = Sale.builder().build();
+        sale.setSaleItems(Arrays.asList(SaleItem.builder().build(), SaleItem.builder().build(), SaleItem.builder().build()));
+
+        // Excecute
+        Sale saleSaved = saleRepository.save(sale);
+        saleRepository.deleteById(saleSaved.getId());
+        List<SaleItem> result = saleItemRepository.findAll();
+
+        // Verification
+        Assertions.assertThat(result).isEmpty();
+
+    }
+
+    @Test
     public void testMustReturnListOfSalesByEmployeeId() {
 
         Employee employee = Employee.builder().build();
-        Employee employeeSaved  = employeeRepository.save(employee);
+        Employee employeeSaved = employeeRepository.save(employee);
 
         Sale saleOne = Sale.builder().employee(employee).build();
         saleRepository.save(saleOne);
@@ -53,7 +94,7 @@ public class SaleRepositoryTest {
     }
 
     @Test
-    public void testMustReturnListOfSalesByClientId(){
+    public void testMustReturnListOfSalesByClientId() {
 
         Client client = Client.builder().build();
         Client clientSaved = clientRepository.save(client);
@@ -74,25 +115,25 @@ public class SaleRepositoryTest {
     }
 
     @Test
-    public void testMustReturnListOfSalesBySaleDate(){
+    public void testMustReturnListOfSalesBySaleDate() {
 
-        Sale saleOne = Sale.builder().saleDate(LocalDate.of(2023,01,01)).build();
+        Sale saleOne = Sale.builder().saleDate(LocalDate.of(2023, 01, 01)).build();
         saleRepository.save(saleOne);
 
-        Sale saleTwo = Sale.builder().saleDate(LocalDate.of(2023, 01,01)).build();
+        Sale saleTwo = Sale.builder().saleDate(LocalDate.of(2023, 01, 01)).build();
         saleRepository.save(saleTwo);
 
-        Sale saleThree = Sale.builder().saleDate(LocalDate.of(2023,01,01)).build();
+        Sale saleThree = Sale.builder().saleDate(LocalDate.of(2023, 01, 01)).build();
         saleRepository.save(saleThree);
 
-        List<Sale> listResponse = saleRepository.findBySaleDate(LocalDate.of(2023,01,01));
+        List<Sale> listResponse = saleRepository.findBySaleDate(LocalDate.of(2023, 01, 01));
 
         Assertions.assertThat(listResponse).hasSize(3);
 
     }
 
     @Test
-    public void testMustReturnListOfSalesByQuery(){
+    public void testMustReturnListOfSalesByQuery() {
 
         Employee employee = Employee.builder().name("EmployeeName").build();
         Employee employeeSaved = employeeRepository.save(employee);
@@ -111,10 +152,5 @@ public class SaleRepositoryTest {
         Assertions.assertThat(listResponse).hasSize(2);
 
     }
-
-
-
-
-
 
 }

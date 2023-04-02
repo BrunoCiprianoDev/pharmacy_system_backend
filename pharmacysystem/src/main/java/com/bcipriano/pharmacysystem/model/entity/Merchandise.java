@@ -60,6 +60,7 @@ public class Merchandise {
     private Double pmc;
 
     private String description;
+
     @ManyToOne
     @JoinColumn(name = "id_discount_group")
     private DiscountGroup discountGroup;

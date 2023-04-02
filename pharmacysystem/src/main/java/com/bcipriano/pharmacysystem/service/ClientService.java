@@ -19,6 +19,4 @@ public interface ClientService {
     List<Client> getClientByQuery(String query);
 
     void deleteClient(Long id);
-
-
 }
