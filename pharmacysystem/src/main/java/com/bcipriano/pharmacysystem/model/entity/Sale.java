@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,8 +23,8 @@ public class Sale {
     private Long id;
 
     @Column(name = "sale_date")
-    @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
-    private LocalDate saleDate = LocalDate.now();
+    @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
+    private LocalDateTime saleDate = LocalDateTime.now();
 
     private Double total;
 

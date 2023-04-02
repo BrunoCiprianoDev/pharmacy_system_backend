@@ -13,6 +13,7 @@ import com.bcipriano.pharmacysystem.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,17 +39,19 @@ public class SaleServiceImpl implements SaleService {
         if (sale.getTotal() < 0) {
             throw new BusinessRuleException("Valor inválido para o total.");
         }
-        if (sale.getEmployee() == null || !employeeRepository.existsById(sale.getEmployee().getId())){
+        if (sale.getEmployee() == null || !employeeRepository.existsById(sale.getEmployee().getId())) {
             throw new BusinessRuleException("Funcionário inválido.");
         }
-        if(!clientRepository.existsById(sale.getClient().getId())){
-            throw new BusinessRuleException("Cliente inválido.");
+        if (sale.getClient() != null) {
+            if (!clientRepository.existsById(sale.getClient().getId())) {
+                throw new BusinessRuleException("Cliente inválido.");
+            }
         }
-        if(sale.getSaleItems().size() < 1) {
+        if (sale.getSaleItems() == null || sale.getSaleItems().size() < 1) {
             throw new BusinessRuleException("É necessário existir pelo menos 1 item na venda.");
         }
 
-        for(SaleItem item : sale.getSaleItems()) {
+        for (SaleItem item : sale.getSaleItems()) {
             SaleItemService.validateSaleItem(item, lotRepository);
         }
 
@@ -57,12 +60,13 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public Sale saveSale(Sale sale) {
         validateSale(sale);
+        sale.setSaleDate(LocalDateTime.now()); //Verificar comportamento no DB de produção <----
         return saleRepository.save(sale);
     }
 
     @Override
     public Sale updateSale(Sale sale) {
-        if(!saleRepository.existsById(sale.getId())){
+        if (!saleRepository.existsById(sale.getId())) {
             throw new BusinessRuleException("A venda que está tentando modificar não está cadastrada.");
         }
         validateSale(sale);
@@ -77,7 +81,7 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public Sale getSaleById(Long id) {
         Optional<Sale> sale = saleRepository.findById(id);
-        if(sale.isEmpty()){
+        if (sale.isEmpty()) {
             throw new InvalidIdException();
         }
         return sale.get();
@@ -90,7 +94,7 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public void deleteSale(Long id) {
-        if(saleRepository.existsById(id)){
+        if (saleRepository.existsById(id)) {
             throw new InvalidIdException();
         }
         saleRepository.deleteById(id);

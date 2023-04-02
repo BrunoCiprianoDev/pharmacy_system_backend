@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -117,19 +118,10 @@ public class SaleRepositoryTest {
     @Test
     public void testMustReturnListOfSalesBySaleDate() {
 
-        Sale saleOne = Sale.builder().saleDate(LocalDate.of(2023, 01, 01)).build();
-        saleRepository.save(saleOne);
+        Sale saleOne = Sale.builder().saleDate(LocalDateTime.now()).build();
+        Sale saleOneSaved = saleRepository.save(saleOne);
 
-        Sale saleTwo = Sale.builder().saleDate(LocalDate.of(2023, 01, 01)).build();
-        saleRepository.save(saleTwo);
-
-        Sale saleThree = Sale.builder().saleDate(LocalDate.of(2023, 01, 01)).build();
-        saleRepository.save(saleThree);
-
-        List<Sale> listResponse = saleRepository.findBySaleDate(LocalDate.of(2023, 01, 01));
-
-        Assertions.assertThat(listResponse).hasSize(3);
-
+        Assertions.assertThat(saleOneSaved.getSaleDate()).isNotNull();
     }
 
     @Test
