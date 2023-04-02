@@ -14,4 +14,6 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
     List<Purchase> findPurchasesBySupplierId(@Param("supplierId") Long supplierId);
 
+    boolean existsByNoteNumber(String noteNumber);
+
 }
