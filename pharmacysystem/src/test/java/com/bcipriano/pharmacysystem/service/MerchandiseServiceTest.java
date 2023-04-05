@@ -41,7 +41,7 @@ public class MerchandiseServiceTest {
 
         // Exception if code.length() != 12
         exception = Assertions.catchThrowable(() -> merchandiseService.validateMerchandise(merchandise));
-        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O codigo de barras inválido.(Verifique os 12 digitos)");
+        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O codigo de barras inválido.(Verifique os 13 digitos)");
         merchandise.setCode("000000000000");
 
         // Exception if department is NULL

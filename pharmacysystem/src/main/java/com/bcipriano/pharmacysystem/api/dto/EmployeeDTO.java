@@ -23,7 +23,19 @@ public class EmployeeDTO {
 
     private LocalDate bornDate;
 
-    private Address address;
+    private String cep;
+
+    private String uf;
+
+    private String city;
+
+    private String neightborhood;
+
+    private String addressDetail;
+
+    private String number;
+
+    private String complement;
 
     private String primaryPhone;
 
@@ -37,6 +49,7 @@ public class EmployeeDTO {
 
     public static EmployeeDTO create(Employee employee) {
         ModelMapper modelMapper = new ModelMapper();
+
         return modelMapper.map(employee, EmployeeDTO.class);
     }
 

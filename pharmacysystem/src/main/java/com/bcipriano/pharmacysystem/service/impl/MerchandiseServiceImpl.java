@@ -29,8 +29,8 @@ public class MerchandiseServiceImpl implements MerchandiseService {
         if(merchandise.getCode() == null){
             throw new BusinessRuleException("O campo código de barras é obrigatório.");
         }
-        if(merchandise.getCode().length() != 12){
-            throw new BusinessRuleException("O codigo de barras inválido.(Verifique os 12 digitos)");
+        if(merchandise.getCode().length() != 13){
+            throw new BusinessRuleException("O codigo de barras inválido.(Verifique os 13 digitos)");
         }
         if(merchandise.getDepartment() == null || merchandise.getName().trim().equals("")){
             throw new BusinessRuleException("Departamento inválido.");
@@ -53,7 +53,7 @@ public class MerchandiseServiceImpl implements MerchandiseService {
         if(merchandise.getFullPrice() < 0) {
             throw new BusinessRuleException("Valor inválido para o preço inteiro.");
         }
-        if(merchandise.getComission() < 0 || merchandise.getComission() > 100) {
+        if(merchandise.getComission() == null || merchandise.getComission() < 0 || merchandise.getComission() > 100) {
             throw new BusinessRuleException("Valor inválido para o percentual de comissão.");
         }
         if(merchandise.getPmc() < 0) {

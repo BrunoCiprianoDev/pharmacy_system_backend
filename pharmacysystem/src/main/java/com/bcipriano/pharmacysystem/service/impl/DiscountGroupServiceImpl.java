@@ -58,9 +58,8 @@ public class DiscountGroupServiceImpl implements DiscountGroupService {
     @Override
     @Transactional
     public DiscountGroup updateDiscountGroup(DiscountGroup discountGroup) {
-        boolean exists = discountGroupRepository.existsByName(discountGroup.getName());
-        if(!exists){
-            throw new BusinessRuleException("O desconto que está tentando modificar não existe.");
+        if(!discountGroupRepository.existsById(discountGroup.getId())) {
+            throw new InvalidIdException();
         }
         validateDiscountGroup(discountGroup);
         return discountGroupRepository.save(discountGroup);

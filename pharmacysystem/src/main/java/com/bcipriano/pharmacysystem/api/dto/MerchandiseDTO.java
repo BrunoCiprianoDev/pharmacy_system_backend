@@ -25,6 +25,8 @@ public class MerchandiseDTO {
 
     private String classification;
 
+    private String brand;
+
     private String formule;
 
     private Stripe stripe;
@@ -43,15 +45,21 @@ public class MerchandiseDTO {
 
     private Double comission;
 
-    private String pmc;
+    private Double pmc;
 
     private String description;
 
     private DiscountGroup discountGroup;
 
+    private Long idDiscountGroup;
+
     public static MerchandiseDTO create(Merchandise merchandise){
         ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(merchandise, MerchandiseDTO.class);
+        MerchandiseDTO merchandiseDTO = modelMapper.map(merchandise, MerchandiseDTO.class);
+        if(merchandise.getDiscountGroup() != null){
+            merchandiseDTO.idDiscountGroup = merchandise.getDiscountGroup().getId();
+        }
+        return merchandiseDTO;
     }
 
 
