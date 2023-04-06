@@ -54,7 +54,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public Purchase updatePurchase(Purchase purchase) {
         if(!purchaseRepository.existsById(purchase.getId())){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Cliente com id inválido.");
         }
         return purchaseRepository.save(purchase);
     }
@@ -65,10 +65,15 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    public List<Purchase> getPurchaseBySupplierId(Long id){
+        return purchaseRepository.findPurchasesBySupplierId(id);
+    }
+
+    @Override
     public Purchase getPurchaseById(Long id) {
         Optional<Purchase> purchase = purchaseRepository.findById(id);
         if(purchase.isEmpty()){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Cliente com id inválido.");
         }
         return purchase.get();
     }
@@ -81,7 +86,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public void deletePurchase(Long id) {
         if(!purchaseRepository.existsById(id)) {
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Cliente com id inválido.");
         }
         purchaseRepository.deleteById(id);
     }

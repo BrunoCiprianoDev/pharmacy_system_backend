@@ -16,6 +16,8 @@ public interface PurchaseService {
 
     Purchase getPurchaseById(Long id);
 
+    List<Purchase> getPurchaseBySupplierId(Long id);
+
     List<Purchase> findPurchaseByQuery(String query);
 
     void deletePurchase(Long id);

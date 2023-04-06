@@ -15,7 +15,7 @@ public class PurchaseDTO {
 
     private Long id;
 
-    private String name;
+    private String purchaseDate;
 
     private String noteNumber;
 
@@ -23,13 +23,12 @@ public class PurchaseDTO {
 
     private Long supplierId;
 
-    private String supplierName;
+    private Supplier supplier;
 
     public static PurchaseDTO create(Purchase purchase){
         ModelMapper modelMapper = new ModelMapper();
         PurchaseDTO dto = modelMapper.map(purchase, PurchaseDTO.class);
         dto.supplierId = purchase.getSupplier().getId();
-        dto.supplierName = purchase.getSupplier().getName();
         return dto;
     }
 
