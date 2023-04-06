@@ -1,7 +1,6 @@
 package com.bcipriano.pharmacysystem.service.impl;
 
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
-import com.bcipriano.pharmacysystem.exception.InvalidIdException;
 import com.bcipriano.pharmacysystem.model.entity.Lot;
 import com.bcipriano.pharmacysystem.model.repository.LotRepository;
 import com.bcipriano.pharmacysystem.model.repository.MerchandiseRepository;
@@ -61,7 +60,7 @@ public class LotServiceImpl implements LotService {
     public Lot getLotById(Long id) {
         Optional<Lot> lot = lotRepository.findById(id);
         if(lot.isEmpty()){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Lote com id inválido.");
         }
         return lot.get();
     }
@@ -89,7 +88,7 @@ public class LotServiceImpl implements LotService {
     @Override
     public void deleteLot(Long id) {
         if(!lotRepository.existsById(id)) {
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Lote com id inválido.");
         }
         lotRepository.deleteById(id);
     }

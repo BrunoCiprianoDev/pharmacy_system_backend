@@ -1,5 +1,6 @@
 package com.bcipriano.pharmacysystem.api.dto;
 
+import com.bcipriano.pharmacysystem.model.entity.Employee;
 import com.bcipriano.pharmacysystem.model.entity.Loss;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +26,7 @@ public class LossDTO {
 
     private Long employeeId;
 
-    private String employeeName;
+    private Employee employee;
 
     private String description;
 
@@ -35,12 +36,6 @@ public class LossDTO {
         dto.lotId = loss.getLot().getId();
         dto.lotNumber = loss.getLot().getNumber();
         dto.employeeId = loss.getEmployee().getId();
-        dto.employeeName = loss.getEmployee().getName();
         return dto;
     }
-
-
-
-
-
 }

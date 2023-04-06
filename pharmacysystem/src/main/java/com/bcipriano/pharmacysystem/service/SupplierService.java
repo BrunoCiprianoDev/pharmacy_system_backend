@@ -16,7 +16,7 @@ public interface SupplierService {
 
     Supplier getSupplierById(Long id);
 
-    List<Supplier> findSupplierByQuery(String query);
+    List<Supplier> getSupplierByQuery(String query);
 
     void deleteSupplier(Long id);
 

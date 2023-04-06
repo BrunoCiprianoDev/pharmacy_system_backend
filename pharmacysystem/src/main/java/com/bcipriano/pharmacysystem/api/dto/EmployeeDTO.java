@@ -3,12 +3,14 @@ package com.bcipriano.pharmacysystem.api.dto;
 import com.bcipriano.pharmacysystem.model.entity.Employee;
 import com.bcipriano.pharmacysystem.model.entity.Address;
 import com.bcipriano.pharmacysystem.model.entity.enums.Profile;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +23,7 @@ public class EmployeeDTO {
 
     private String cpf;
 
-    private LocalDate bornDate;
+    private String bornDate;
 
     private String cep;
 
@@ -45,13 +47,23 @@ public class EmployeeDTO {
 
     private String password;
 
-    private Profile profile;
+    private String profile;
 
     public static EmployeeDTO create(Employee employee) {
         ModelMapper modelMapper = new ModelMapper();
+        EmployeeDTO employeeDTO = modelMapper.map(employee, EmployeeDTO.class);
 
-        return modelMapper.map(employee, EmployeeDTO.class);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        employeeDTO.bornDate = employee.getBornDate().format(formatter);
+
+        employeeDTO.cep = employee.getAddress().getCep();
+        employeeDTO.uf = employee.getAddress().getUf();
+        employeeDTO.city = employee.getAddress().getCity();
+        employeeDTO.neightborhood = employee.getAddress().getNeightborhood();
+        employeeDTO.addressDetail = employee.getAddress().getAddressDetail();
+        employeeDTO.number = employee.getAddress().getNumber();
+        employeeDTO.complement = employee.getAddress().getComplement();
+        return employeeDTO;
     }
-
 
 }

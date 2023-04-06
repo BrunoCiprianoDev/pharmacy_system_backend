@@ -7,9 +7,12 @@ import com.bcipriano.pharmacysystem.model.entity.DiscountGroup;
 import com.bcipriano.pharmacysystem.service.DiscountGroupService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -40,8 +43,8 @@ public class DiscountGroupController {
             DiscountGroup discountGroupResponse = discountGroupService.getDiscountGroupById(id);
             DiscountGroupDTO discountGroupDTO = DiscountGroupDTO.create(discountGroupResponse);
             return ResponseEntity.ok(discountGroupDTO);
-        } catch (InvalidIdException invalidIdException) {
-            return ResponseEntity.badRequest().body(invalidIdException.getMessage());
+        } catch (BusinessRuleException businessRuleException) {
+            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
     }
 
@@ -49,8 +52,8 @@ public class DiscountGroupController {
     public ResponseEntity post(@RequestBody DiscountGroupDTO discountGroupDTO) {
         try {
             DiscountGroup discountGroup = converter(discountGroupDTO);
-            DiscountGroup discountGroupResponse = discountGroupService.saveDiscountGroup(discountGroup);
-            return ResponseEntity.ok(discountGroupResponse);
+            discountGroupService.saveDiscountGroup(discountGroup);
+            return new ResponseEntity("Dados armazenados com sucesso!", HttpStatus.CREATED);
         } catch (BusinessRuleException businessRuleException) {
             return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
@@ -61,10 +64,10 @@ public class DiscountGroupController {
         try {
             DiscountGroup discountGroup = converter(discountGroupDTO);
             discountGroup.setId(id);
-            DiscountGroup discountGroupResponse = discountGroupService.updateDiscountGroup(discountGroup);
-            return ResponseEntity.ok(discountGroupResponse);
-        } catch (InvalidIdException invalidIdException) {
-            return ResponseEntity.badRequest().body(invalidIdException.getMessage());
+            discountGroupService.updateDiscountGroup(discountGroup);
+            return ResponseEntity.ok("Mercadoria atualizada com sucesso!");
+        } catch (BusinessRuleException businessRuleException) {
+            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
     }
 
@@ -73,8 +76,8 @@ public class DiscountGroupController {
         try {
             discountGroupService.deleteDiscountGroup(id);
             return ResponseEntity.ok("Grupo de desconto excluído com sucesso!");
-        } catch (InvalidIdException invalidIdException) {
-            return ResponseEntity.badRequest().body(invalidIdException.getMessage());
+        } catch (BusinessRuleException businessRuleException) {
+            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
     }
 
@@ -82,9 +85,8 @@ public class DiscountGroupController {
         ModelMapper modelMapper = new ModelMapper();
         DiscountGroup discountGroup = modelMapper.map(discountGroupDTO, DiscountGroup.class);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        discountGroup.setStartDate(LocalDate.parse(discountGroupDTO.getStartDate(), formatter));
-        discountGroup.setFinalDate(LocalDate.parse(discountGroupDTO.getFinalDate(), formatter));
+        discountGroup.setStartDate(LocalDate.parse(discountGroupDTO.getStartDate()));
+        discountGroup.setFinalDate(LocalDate.parse(discountGroupDTO.getFinalDate()));
 
         return discountGroup;
     }

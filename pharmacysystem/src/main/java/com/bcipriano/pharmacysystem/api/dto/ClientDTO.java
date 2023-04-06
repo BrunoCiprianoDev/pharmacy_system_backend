@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 
+import java.time.format.DateTimeFormatter;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +22,19 @@ public class ClientDTO {
 
     private String bornDate;
 
-    private Address address;
+    private String cep;
+
+    private String uf;
+
+    private String city;
+
+    private String neightborhood;
+
+    private String addressDetail;
+
+    private String number;
+
+    private String complement;
 
     private String phone;
 
@@ -28,7 +42,20 @@ public class ClientDTO {
 
     public static ClientDTO create(Client client) {
         ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(client, ClientDTO.class);
+        ClientDTO clientDTO = modelMapper.map(client, ClientDTO.class);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        clientDTO.bornDate = client.getBornDate().format(formatter);
+
+        clientDTO.cep = client.getAddress().getCep();
+        clientDTO.uf = client.getAddress().getUf();
+        clientDTO.city = client.getAddress().getCity();
+        clientDTO.neightborhood = client.getAddress().getNeightborhood();
+        clientDTO.addressDetail = client.getAddress().getAddressDetail();
+        clientDTO.number = client.getAddress().getNumber();
+        clientDTO.complement = client.getAddress().getComplement();
+
+        return clientDTO;
     }
 
 }

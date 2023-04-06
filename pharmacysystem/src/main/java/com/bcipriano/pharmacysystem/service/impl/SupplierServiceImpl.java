@@ -93,20 +93,20 @@ public class SupplierServiceImpl implements SupplierService {
     public Supplier getSupplierById(Long id) {
         Optional<Supplier> supplier = supplierRepository.findById(id);
         if(supplier.isEmpty()){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Fornecedor com id inválido.");
         }
         return supplier.get();
     }
 
     @Override
-    public List<Supplier> findSupplierByQuery(String query) {
+    public List<Supplier> getSupplierByQuery(String query) {
         return supplierRepository.findSupplierByQuery(query);
     }
 
     @Override
     public void deleteSupplier(Long id) {
-        if(supplierRepository.existsById(id)) {
-            throw new InvalidIdException();
+        if(!supplierRepository.existsById(id)) {
+            throw new BusinessRuleException("Fornecedor com id inválido.");
         }
         supplierRepository.deleteById(id);
     }

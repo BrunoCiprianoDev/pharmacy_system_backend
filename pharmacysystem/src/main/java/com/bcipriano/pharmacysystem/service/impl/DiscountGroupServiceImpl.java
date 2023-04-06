@@ -59,7 +59,7 @@ public class DiscountGroupServiceImpl implements DiscountGroupService {
     @Transactional
     public DiscountGroup updateDiscountGroup(DiscountGroup discountGroup) {
         if(!discountGroupRepository.existsById(discountGroup.getId())) {
-            throw new InvalidIdException();
+            throw new BusinessRuleException("O grupo desconto que está tentado modificar não está cadastrado no sistema.");
         }
         validateDiscountGroup(discountGroup);
         return discountGroupRepository.save(discountGroup);
@@ -74,7 +74,7 @@ public class DiscountGroupServiceImpl implements DiscountGroupService {
     public DiscountGroup getDiscountGroupById(Long id) {
         Optional<DiscountGroup> discountGroup = discountGroupRepository.findById(id);
         if(discountGroup.isEmpty()){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Grupo desconto com id inválido!");
         }
         return discountGroup.get();
     }
@@ -99,7 +99,7 @@ public class DiscountGroupServiceImpl implements DiscountGroupService {
     public void deleteDiscountGroup(Long id) {
         boolean exists = discountGroupRepository.existsById(id);
         if(!exists){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Grupo desconto com id inválido!");
         }
         discountGroupRepository.deleteById(id);
     }

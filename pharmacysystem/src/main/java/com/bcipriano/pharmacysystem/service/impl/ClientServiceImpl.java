@@ -77,18 +77,17 @@ public class ClientServiceImpl implements ClientService {
     @Override
     @Transactional
     public Client saveClient(Client client) {
-        boolean exists = clientRepository.existsByCpf(client.getCpf());
-        if(exists){
+        if(clientRepository.existsByCpf(client.getCpf())){
             throw new BusinessRuleException("Já existe um cliente cadastrado com esse cpf.");
         }
+        validateClient(client);
         return clientRepository.save(client);
     }
 
     @Override
     public Client updateClient(Client client) {
-        boolean exists = clientRepository.existsById(client.getId());
-        if(!exists){
-            throw new InvalidIdException("O cliente que está tentando modificar não está cadastrado.");
+        if(!clientRepository.existsById(client.getId())){
+            throw new BusinessRuleException("O cliente que está tentando modificar não está cadastrado.");
         }
         validateClient(client);
         return clientRepository.save(client);
@@ -103,7 +102,7 @@ public class ClientServiceImpl implements ClientService {
     public Client getClientById(Long id) {
         Optional<Client> client = clientRepository.findById(id);
         if(client.isEmpty()){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Client com id inválido.");
         }
         return client.get();
     }
@@ -117,7 +116,7 @@ public class ClientServiceImpl implements ClientService {
     public void deleteClient(Long id) {
         boolean exists = clientRepository.existsById(id);
         if(!exists){
-            throw new InvalidIdException("O cliente que está tentando deletar não está cadastrado no sistema");
+            throw new BusinessRuleException("Cliente com id inválido.");
         }
         clientRepository.deleteById(id);
     }

@@ -42,8 +42,8 @@ public class MerchandiseController {
             Merchandise merchandiseResponse = merchandiseService.getMerchandiseById(id);
             MerchandiseDTO merchandiseDTO = MerchandiseDTO.create(merchandiseResponse);
             return ResponseEntity.ok(merchandiseDTO);
-        } catch (InvalidIdException invalidIdException) {
-            return ResponseEntity.badRequest().body(invalidIdException.getMessage());
+        } catch (BusinessRuleException businessRuleException) {
+            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
     }
 
@@ -51,8 +51,8 @@ public class MerchandiseController {
     public ResponseEntity post(@RequestBody MerchandiseDTO merchandiseDTO) {
         try {
             Merchandise merchandise = converter(merchandiseDTO);
-            Merchandise merchandiseResponse = merchandiseService.saveMerchandise(merchandise);
-            return new ResponseEntity(merchandiseResponse, HttpStatus.CREATED);
+            merchandiseService.saveMerchandise(merchandise);
+            return new ResponseEntity("Mercadoria armazenada com sucesso!", HttpStatus.CREATED);
         } catch (BusinessRuleException businessRuleException) {
             return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
@@ -63,8 +63,8 @@ public class MerchandiseController {
         try {
             Merchandise merchandise = converter(merchandiseDTO);
             merchandise.setId(id);
-            Merchandise merchandiseResponse = merchandiseService.updateMerchandise(merchandise);
-            return ResponseEntity.ok(merchandiseResponse);
+            merchandiseService.updateMerchandise(merchandise);
+            return ResponseEntity.ok("Mercadoria atualizada com sucesso!");
         } catch (BusinessRuleException businessRuleException) {
             return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }

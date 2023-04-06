@@ -21,7 +21,7 @@ public class MerchandiseDTO {
 
     private String code;
 
-    private Department department;
+    private String department;
 
     private String classification;
 

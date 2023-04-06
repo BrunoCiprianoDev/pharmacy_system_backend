@@ -3,6 +3,7 @@ package com.bcipriano.pharmacysystem.service.impl;
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
 import com.bcipriano.pharmacysystem.exception.InvalidIdException;
 import com.bcipriano.pharmacysystem.model.entity.Merchandise;
+import com.bcipriano.pharmacysystem.model.repository.DiscountGroupRepository;
 import com.bcipriano.pharmacysystem.model.repository.MerchandiseRepository;
 import com.bcipriano.pharmacysystem.service.MerchandiseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class MerchandiseServiceImpl implements MerchandiseService {
     public Merchandise getMerchandiseById(Long id) {
         Optional<Merchandise> merchandise = merchandiseRepository.findById(id);
         if(merchandise.isEmpty()){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Mercadoria com id inválido.");
         }
         return merchandise.get();
     }
@@ -104,7 +105,7 @@ public class MerchandiseServiceImpl implements MerchandiseService {
     @Override
     public void deleteMerchandise(Long id) {
         if(!merchandiseRepository.existsById(id)){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Mercadoria com id inválido.");
         }
         merchandiseRepository.deleteById(id);
     }

@@ -1,8 +1,6 @@
 package com.bcipriano.pharmacysystem.service.impl;
 
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
-import com.bcipriano.pharmacysystem.exception.InvalidIdException;
-import com.bcipriano.pharmacysystem.exception.NotFoundException;
 import com.bcipriano.pharmacysystem.model.entity.Employee;
 import com.bcipriano.pharmacysystem.model.repository.EmployeeRepository;
 import com.bcipriano.pharmacysystem.service.AddressService;
@@ -107,9 +105,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public Employee updateEmployee(Employee employee) {
-        boolean exists = employeeRepository.existsById(employee.getId());
-        if(exists) {
-            throw new NotFoundException("O funcionario que está tentando alterar não está cadastrado no sistema.");
+        if(!employeeRepository.existsById(employee.getId())) {
+            throw new BusinessRuleException("O funcionário que está tentado modificar não está cadastrado.");
         }
         validateEmployee(employee);
         return employeeRepository.save(employee);
@@ -124,7 +121,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee getEmployeeById(Long id) {
         Optional<Employee> employee = employeeRepository.findById(id);
         if(employee.isEmpty()){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Funcionario com id inválido.");
         }
         return employee.get();
     }
@@ -133,7 +130,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee findByEmail(String email) {
         Optional<Employee> employee = employeeRepository.findByEmail(email);
         if(employee.isEmpty()){
-            throw new NotFoundException("E-mail inválido.");
+            throw new BusinessRuleException("E-mail inválido para esse funcionário.");
         }
         return employee.get();
     }
@@ -147,7 +144,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void deleteEmployee(Long id) {
         boolean exists = employeeRepository.existsById(id);
         if(!exists){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Funcionario com id inválido.");
         }
         employeeRepository.deleteById(id);
     }
