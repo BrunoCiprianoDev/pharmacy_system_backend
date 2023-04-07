@@ -2,6 +2,7 @@ package com.bcipriano.pharmacysystem.api.dto;
 
 import com.bcipriano.pharmacysystem.model.entity.Employee;
 import com.bcipriano.pharmacysystem.model.entity.Loss;
+import com.bcipriano.pharmacysystem.model.entity.Lot;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,13 +17,13 @@ public class LossDTO {
 
     private Long id;
 
-    private LocalDate registerDate;
+    private String registerDate;
 
     private Integer units;
 
     private Long lotId;
 
-    private String lotNumber;
+    private Lot lot;
 
     private Long employeeId;
 
@@ -34,7 +35,6 @@ public class LossDTO {
         ModelMapper modelMapper = new ModelMapper();
         LossDTO dto = modelMapper.map(loss, LossDTO.class);
         dto.lotId = loss.getLot().getId();
-        dto.lotNumber = loss.getLot().getNumber();
         dto.employeeId = loss.getEmployee().getId();
         return dto;
     }

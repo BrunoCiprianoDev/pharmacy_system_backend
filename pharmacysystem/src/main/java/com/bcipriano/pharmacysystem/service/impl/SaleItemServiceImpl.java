@@ -1,7 +1,6 @@
 package com.bcipriano.pharmacysystem.service.impl;
 
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
-import com.bcipriano.pharmacysystem.exception.InvalidIdException;
 import com.bcipriano.pharmacysystem.model.entity.SaleItem;
 import com.bcipriano.pharmacysystem.model.repository.LotRepository;
 import com.bcipriano.pharmacysystem.model.repository.SaleItemRepository;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SaleItemServiceImpl implements SaleItemService {
@@ -58,9 +58,18 @@ public class SaleItemServiceImpl implements SaleItemService {
     @Override
     public List<SaleItem> getSaleItemBySaleId(Long saleId) {
         if(!saleRepository.existsById(saleId)){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Item venda com id inválido.");
         }
         return saleItemRepository.findSaleItemBySaleId(saleId);
+    }
+
+    @Override
+    public SaleItem getSaleItemById(Long id){
+        Optional<SaleItem> saleItem = saleItemRepository.findSaleItemById(id);
+        if(saleItem.isEmpty()){
+            throw new BusinessRuleException("Item venda com id inválido.");
+        }
+        return saleItem.get();
     }
 
     @Override
@@ -71,7 +80,7 @@ public class SaleItemServiceImpl implements SaleItemService {
     @Override
     public void deleteSaleItem(Long id) {
         if(!saleItemRepository.existsById(id)){
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Item venda com id inválido.");
         }
         saleItemRepository.deleteById(id);
     }

@@ -28,6 +28,8 @@ public interface SaleItemService {
 
     List<SaleItem> getSaleItemBySaleId(Long saleId);
 
+    SaleItem getSaleItemById(Long id);
+
     List<SaleItem> getSaleItemByLotId(Long lotId);
 
     void deleteSaleItem(Long id);

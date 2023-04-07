@@ -3,6 +3,7 @@ package com.bcipriano.pharmacysystem.service;
 import com.bcipriano.pharmacysystem.model.entity.Return;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReturnService {
 
@@ -12,9 +13,9 @@ public interface ReturnService {
 
     Return updateReturn(Return rtn);
 
-    List<Return> getAllReturn();
+    List<Return> getReturn();
 
-    List<Return> getReturnBySaleItemId(Long saleId);
+    Return getReturnBySaleItemId(Long saleId);
 
     Return getReturnById(Long id);
 

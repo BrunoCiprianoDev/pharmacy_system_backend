@@ -1,6 +1,7 @@
 package com.bcipriano.pharmacysystem.api.dto;
 
 import com.bcipriano.pharmacysystem.model.entity.Return;
+import com.bcipriano.pharmacysystem.model.entity.SaleItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,13 +16,15 @@ public class ReturnDTO {
 
     private Long id;
 
-    private LocalDate registerDate;
+    private String registerDate;
 
     private String description;
 
     private Long saleItemId;
 
-    private static ReturnDTO create(Return returnObj){
+    private SaleItem saleItem;
+
+    public static ReturnDTO create(Return returnObj){
         ModelMapper modelMapper = new ModelMapper();
         ReturnDTO dto = modelMapper.map(returnObj, ReturnDTO.class);
         dto.saleItemId = returnObj.getSaleItem().getId();

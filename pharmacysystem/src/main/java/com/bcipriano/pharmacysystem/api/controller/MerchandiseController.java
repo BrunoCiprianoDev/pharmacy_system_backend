@@ -2,7 +2,6 @@ package com.bcipriano.pharmacysystem.api.controller;
 
 import com.bcipriano.pharmacysystem.api.dto.MerchandiseDTO;
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
-import com.bcipriano.pharmacysystem.exception.InvalidIdException;
 import com.bcipriano.pharmacysystem.model.entity.Merchandise;
 import com.bcipriano.pharmacysystem.service.DiscountGroupService;
 import com.bcipriano.pharmacysystem.service.MerchandiseService;

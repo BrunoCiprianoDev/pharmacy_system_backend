@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LossRepository extends JpaRepository<Loss, Long> {
 
@@ -16,5 +17,7 @@ public interface LossRepository extends JpaRepository<Loss, Long> {
 
     @Query("SELECT l FROM Loss l JOIN l.lot lot WHERE lot.number LIKE %:query%")
     List<Loss> findLossByLotNumber(@Param("query") String query);
+
+    Optional<Loss> findLossById(@Param("id") Long id);
 
 }

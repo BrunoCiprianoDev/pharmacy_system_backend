@@ -16,7 +16,7 @@ public interface LossService {
 
     Loss getLossById(Long id);
 
-    Loss getLossByQuery(String query);
+    List<Loss> getLossByQuery(String query);
 
     void deleteLoss(Long id);
 

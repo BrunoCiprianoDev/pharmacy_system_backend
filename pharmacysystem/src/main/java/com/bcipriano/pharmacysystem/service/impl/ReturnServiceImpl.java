@@ -1,7 +1,6 @@
 package com.bcipriano.pharmacysystem.service.impl;
 
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
-import com.bcipriano.pharmacysystem.exception.InvalidIdException;
 import com.bcipriano.pharmacysystem.model.entity.Return;
 import com.bcipriano.pharmacysystem.model.repository.ReturnRepository;
 import com.bcipriano.pharmacysystem.model.repository.SaleItemRepository;
@@ -32,7 +31,7 @@ public class ReturnServiceImpl implements ReturnService {
             throw new BusinessRuleException("Adicione uma descrição para a devolução.");
         }
 
-        if (!saleItemRepository.existsById(rtn.getSaleItem().getId())) {
+        if (rtn.getSaleItem() == null || !saleItemRepository.existsById(rtn.getSaleItem().getId())) {
             throw new BusinessRuleException("Essa devolução não está relacionada a nenhum item vendido.");
         }
 
@@ -47,30 +46,31 @@ public class ReturnServiceImpl implements ReturnService {
     @Override
     public Return updateReturn(Return rtn) {
         if (!returnRepository.existsById(rtn.getId())) {
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Registro de devolução com id inválido.");
         }
         validateReturn(rtn);
         return null;
     }
 
     @Override
-    public List<Return> getAllReturn() {
+    public List<Return> getReturn() {
         return returnRepository.findAll();
     }
 
     @Override
-    public List<Return> getReturnBySaleItemId(Long saleId) {
-        if (!saleItemRepository.existsById(saleId)) {
-            throw new InvalidIdException();
+    public Return getReturnBySaleItemId(Long saleId) {
+        Optional<Return> returnOptional = returnRepository.findBySaleItemId(saleId);
+        if(returnOptional.isEmpty()){
+            throw new BusinessRuleException("Esse registro de devolução não está relacionado a nenhuma item vendido.");
         }
-        return returnRepository.findBySaleItemId(saleId);
+        return returnOptional.get();
     }
 
     @Override
     public Return getReturnById(Long id) {
         Optional<Return> rtn = returnRepository.findById(id);
         if (rtn.isEmpty()) {
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Registro de devolução com id inválido.");
         }
         return rtn.get();
     }
@@ -78,7 +78,7 @@ public class ReturnServiceImpl implements ReturnService {
     @Override
     public void deleteReturn(Long id) {
         if (!returnRepository.existsById(id)) {
-            throw new InvalidIdException();
+            throw new BusinessRuleException("Registro de devolução com id inválido.");
         }
         returnRepository.deleteById(id);
     }

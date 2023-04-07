@@ -52,6 +52,9 @@ public class LotServiceImpl implements LotService {
 
     @Override
     public Lot updateLot(Lot lot) {
+        if(!lotRepository.existsById(lot.getId())){
+            throw new BusinessRuleException("Lot com id inválido.");
+        }
         validateLot(lot);
         return lotRepository.save(lot);
     }

@@ -54,7 +54,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public Purchase updatePurchase(Purchase purchase) {
         if(!purchaseRepository.existsById(purchase.getId())){
-            throw new BusinessRuleException("Cliente com id inválido.");
+            throw new BusinessRuleException("Compra com id inválido.");
         }
         return purchaseRepository.save(purchase);
     }
