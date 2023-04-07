@@ -13,6 +13,7 @@ import com.bcipriano.pharmacysystem.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -47,20 +48,12 @@ public class SaleServiceImpl implements SaleService {
                 throw new BusinessRuleException("Cliente inválido.");
             }
         }
-        if (sale.getSaleItems() == null || sale.getSaleItems().size() < 1) {
-            throw new BusinessRuleException("É necessário existir pelo menos 1 item na venda.");
-        }
-
-        for (SaleItem item : sale.getSaleItems()) {
-            SaleItemService.validateSaleItem(item, lotRepository);
-        }
-
     }
 
     @Override
     public Sale saveSale(Sale sale) {
         validateSale(sale);
-        sale.setSaleDate(LocalDateTime.now()); //Verificar comportamento no DB de produção <----
+        sale.setSaleDate(LocalDate.now()); //Verificar comportamento no DB de produção <----
         return saleRepository.save(sale);
     }
 

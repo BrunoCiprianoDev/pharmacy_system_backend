@@ -24,7 +24,6 @@ public class ReturnController {
 
     private final SaleItemService saleItemService;
 
-
     @GetMapping
     public ResponseEntity get() {
         List<Return> returnList = returnService.getReturn();
@@ -95,7 +94,6 @@ public class ReturnController {
         if(returnDTO.getSaleItemId() != null){
             returnObj.setSaleItem(saleItemService.getSaleItemById(returnDTO.getSaleItemId()));
         }
-
         return returnObj;
     }
 
