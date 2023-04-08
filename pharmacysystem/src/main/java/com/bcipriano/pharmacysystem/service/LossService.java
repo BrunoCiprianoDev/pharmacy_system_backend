@@ -1,6 +1,8 @@
 package com.bcipriano.pharmacysystem.service;
 
 import com.bcipriano.pharmacysystem.model.entity.Loss;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ public interface LossService {
 
     Loss updateLoss(Loss loss);
 
-    List<Loss> getLoss();
+    Page<Loss> getLoss(Pageable pageable);
 
     Loss getLossById(Long id);
 

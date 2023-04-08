@@ -8,11 +8,15 @@ import com.bcipriano.pharmacysystem.service.LossService;
 import com.bcipriano.pharmacysystem.service.LotService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,15 +32,29 @@ public class LossController {
     private final LotService lotService;
 
     @GetMapping
-    public ResponseEntity get() {
-        List<Loss> lossList = lossService.getLoss();
-        return ResponseEntity.ok(lossList.stream().map(LossDTO::create).collect(Collectors.toList()));
+    public ResponseEntity get(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Loss> lossPage = lossService.getLoss(pageable);
+        return ResponseEntity.ok(lossPage.stream().map(LossDTO::create).collect(Collectors.toList()));
     }
 
-    @GetMapping("/search/{query}")
-    public ResponseEntity get(@PathVariable("query") String query) {
-        List<Loss> lossList = lossService.getLossByQuery(query);
-        return ResponseEntity.ok(lossList.stream().map(LossDTO::create).collect(Collectors.toList()));
+    @GetMapping("/search")
+    public ResponseEntity get(@RequestParam("query") String query,
+                              @RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "10") int size) {
+
+        int startItem = size * page;
+        List<Loss> pageList;
+        List<Loss> losses = lossService.getLossByQuery(query);
+
+        if(losses.size() < startItem) {
+            pageList = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + size, losses.size());
+            pageList = losses.subList(startItem, toIndex);
+        }
+
+        return ResponseEntity.ok(pageList.stream().map(LossDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("{id}")

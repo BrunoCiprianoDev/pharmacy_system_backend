@@ -6,6 +6,8 @@ import com.bcipriano.pharmacysystem.model.repository.EmployeeRepository;
 import com.bcipriano.pharmacysystem.service.AddressService;
 import com.bcipriano.pharmacysystem.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,8 +115,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> getEmployee() {
-        return employeeRepository.findAll();
+    public Page<Employee> getEmployee(Pageable pageable) {
+        return employeeRepository.findAll(pageable);
     }
 
     @Override

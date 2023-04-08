@@ -2,6 +2,8 @@ package com.bcipriano.pharmacysystem.service;
 
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
 import com.bcipriano.pharmacysystem.model.entity.Address;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -35,7 +37,7 @@ public interface AddressService {
 
     Address updateAddress(Address address);
 
-    List<Address> getAddress();
+    Page<Address> getAddress(Pageable pageable);
 
     Address getAddressById(Long id);
 

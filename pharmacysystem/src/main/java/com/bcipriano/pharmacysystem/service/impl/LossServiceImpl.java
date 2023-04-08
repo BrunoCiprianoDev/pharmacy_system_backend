@@ -6,6 +6,8 @@ import com.bcipriano.pharmacysystem.model.repository.EmployeeRepository;
 import com.bcipriano.pharmacysystem.model.repository.LossRepository;
 import com.bcipriano.pharmacysystem.model.repository.LotRepository;
 import com.bcipriano.pharmacysystem.service.LossService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -58,8 +60,8 @@ public class LossServiceImpl implements LossService {
     }
 
     @Override
-    public List<Loss> getLoss() {
-        return lossRepository.findAll();
+    public Page<Loss> getLoss(Pageable pageable) {
+        return lossRepository.findAll(pageable);
     }
 
     @Override

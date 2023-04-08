@@ -3,15 +3,20 @@ package com.bcipriano.pharmacysystem.api.controller;
 import com.bcipriano.pharmacysystem.api.dto.SupplierDTO;
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
 import com.bcipriano.pharmacysystem.model.entity.Address;
+import com.bcipriano.pharmacysystem.model.entity.Employee;
 import com.bcipriano.pharmacysystem.model.entity.Supplier;
 import com.bcipriano.pharmacysystem.service.AddressService;
 import com.bcipriano.pharmacysystem.service.SupplierService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,15 +30,28 @@ public class SupplierController {
     private final AddressService addressService;
 
     @GetMapping
-    public ResponseEntity get() {
-        List<Supplier> supplierList = supplierService.getSupplier();
-        return ResponseEntity.ok(supplierList.stream().map(SupplierDTO::create).collect(Collectors.toList()));
+    public ResponseEntity get(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Supplier> supplierPage = supplierService.getSupplier(pageable);
+        return ResponseEntity.ok(supplierPage.stream().map(SupplierDTO::create).collect(Collectors.toList()));
     }
 
-    @GetMapping("/search/{query}")
-    public ResponseEntity get(@PathVariable("query") String query){
-        List<Supplier> supplierList = supplierService.getSupplierByQuery(query);
-        return ResponseEntity.ok(supplierList.stream().map(SupplierDTO::create).collect(Collectors.toList()));
+    @GetMapping("/search")
+    public ResponseEntity get(@RequestParam("query") String query,
+                              @RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "10") int size){
+
+        int startItem = size * page;
+        List<Supplier> pageList;
+        List<Supplier> suppliers = supplierService.getSupplierByQuery(query);
+
+        if(suppliers.size() < startItem){
+            pageList = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + size, suppliers.size());
+            pageList = suppliers.subList(startItem, toIndex);
+        }
+        return ResponseEntity.ok(pageList.stream().map(SupplierDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("{id}")

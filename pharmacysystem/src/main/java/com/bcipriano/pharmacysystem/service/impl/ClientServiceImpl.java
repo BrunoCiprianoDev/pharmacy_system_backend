@@ -1,12 +1,13 @@
 package com.bcipriano.pharmacysystem.service.impl;
 
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
-import com.bcipriano.pharmacysystem.exception.InvalidIdException;
 import com.bcipriano.pharmacysystem.model.entity.Client;
 import com.bcipriano.pharmacysystem.model.repository.ClientRepository;
 import com.bcipriano.pharmacysystem.service.AddressService;
 import com.bcipriano.pharmacysystem.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,8 +95,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<Client> getClient() {
-        return clientRepository.findAll();
+    public Page<Client> getClient(Pageable pageable) {
+        return clientRepository.findAll(pageable);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.bcipriano.pharmacysystem.service;
 
 import com.bcipriano.pharmacysystem.model.entity.DiscountGroup;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,7 +15,7 @@ public interface DiscountGroupService {
 
     DiscountGroup updateDiscountGroup(DiscountGroup discountGroup);
 
-    List<DiscountGroup> getDiscountGroup();
+    Page<DiscountGroup> getDiscountGroup(Pageable pageable);
 
     DiscountGroup getDiscountGroupById(Long id);
 

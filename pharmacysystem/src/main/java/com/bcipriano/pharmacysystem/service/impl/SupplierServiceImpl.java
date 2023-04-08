@@ -7,6 +7,8 @@ import com.bcipriano.pharmacysystem.model.repository.SupplierRepository;
 import com.bcipriano.pharmacysystem.service.AddressService;
 import com.bcipriano.pharmacysystem.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -85,8 +87,8 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    public List<Supplier> getSupplier() {
-        return supplierRepository.findAll();
+    public Page<Supplier> getSupplier(Pageable pageable) {
+        return supplierRepository.findAll(pageable);
     }
 
     @Override

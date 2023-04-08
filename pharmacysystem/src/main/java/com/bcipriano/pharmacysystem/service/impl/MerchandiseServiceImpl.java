@@ -7,6 +7,8 @@ import com.bcipriano.pharmacysystem.model.repository.DiscountGroupRepository;
 import com.bcipriano.pharmacysystem.model.repository.MerchandiseRepository;
 import com.bcipriano.pharmacysystem.service.MerchandiseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -84,8 +86,8 @@ public class MerchandiseServiceImpl implements MerchandiseService {
     }
 
     @Override
-    public List<Merchandise> getMerchandise() {
-        return merchandiseRepository.findAll();
+    public Page<Merchandise> getMerchandise(Pageable pageable) {
+        return merchandiseRepository.findAll(pageable);
     }
 
     @Override

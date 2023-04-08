@@ -6,6 +6,8 @@ import com.bcipriano.pharmacysystem.model.entity.Address;
 import com.bcipriano.pharmacysystem.model.repository.AddressRepository;
 import com.bcipriano.pharmacysystem.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +39,8 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<Address> getAddress() {
-        return addressRepository.findAll();
+    public Page<Address> getAddress(Pageable pageable) {
+        return addressRepository.findAll(pageable);
     }
 
     @Override

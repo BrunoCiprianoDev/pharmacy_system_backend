@@ -1,6 +1,8 @@
 package com.bcipriano.pharmacysystem.service;
 
 import com.bcipriano.pharmacysystem.model.entity.Client;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ public interface ClientService {
 
     Client updateClient(Client client);
 
-    List<Client> getClient();
+    Page<Client> getClient(Pageable pageable);
 
     Client getClientById(Long id);
 

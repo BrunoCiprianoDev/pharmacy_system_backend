@@ -7,6 +7,8 @@ import com.bcipriano.pharmacysystem.model.entity.DiscountGroup;
 import com.bcipriano.pharmacysystem.model.repository.DiscountGroupRepository;
 import com.bcipriano.pharmacysystem.service.DiscountGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,8 +68,8 @@ public class DiscountGroupServiceImpl implements DiscountGroupService {
     }
 
     @Override
-    public List<DiscountGroup> getDiscountGroup() {
-        return discountGroupRepository.findAll();
+    public Page<DiscountGroup> getDiscountGroup(Pageable pageable) {
+        return discountGroupRepository.findAll(pageable);
     }
 
     @Override

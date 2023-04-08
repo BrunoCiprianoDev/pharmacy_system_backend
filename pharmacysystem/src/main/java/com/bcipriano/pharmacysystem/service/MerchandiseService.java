@@ -1,6 +1,8 @@
 package com.bcipriano.pharmacysystem.service;
 
 import com.bcipriano.pharmacysystem.model.entity.Merchandise;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ public interface MerchandiseService {
 
     Merchandise updateMerchandise(Merchandise merchandise);
 
-    List<Merchandise> getMerchandise();
+    Page<Merchandise> getMerchandise(Pageable pageable);
 
     Merchandise getMerchandiseById(Long id);
 

@@ -7,10 +7,14 @@ import com.bcipriano.pharmacysystem.service.DiscountGroupService;
 import com.bcipriano.pharmacysystem.service.MerchandiseService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,16 +27,29 @@ public class MerchandiseController {
 
     private final DiscountGroupService discountGroupService;
 
-    @GetMapping()
-    public ResponseEntity get() {
-        List<Merchandise> merchandises = merchandiseService.getMerchandise();
-        return ResponseEntity.ok(merchandises.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
+    @GetMapping
+    public ResponseEntity get(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Merchandise> merchandisePage = merchandiseService.getMerchandise(pageable);
+        return ResponseEntity.ok(merchandisePage.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
     }
+    @GetMapping("/search")
+    public ResponseEntity get(@RequestParam("query") String query,
+                              @RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "10") int size) {
 
-    @GetMapping("/search/{query}")
-    public ResponseEntity get(@PathVariable("query") String query) {
+        int startItem = size * page;
+        List<Merchandise> pageList;
         List<Merchandise> merchandises = merchandiseService.findMerchandiseByQuery(query);
-        return ResponseEntity.ok(merchandises.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
+
+        if(merchandises.size() < startItem) {
+            pageList = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + size, merchandises.size());
+            pageList = merchandises.subList(startItem, toIndex);
+        }
+
+        return ResponseEntity.ok(pageList.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("{id}")
@@ -46,7 +63,7 @@ public class MerchandiseController {
         }
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity post(@RequestBody MerchandiseDTO merchandiseDTO) {
         try {
             Merchandise merchandise = converter(merchandiseDTO);
