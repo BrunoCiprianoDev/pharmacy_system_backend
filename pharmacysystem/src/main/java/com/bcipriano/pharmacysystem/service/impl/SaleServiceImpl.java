@@ -11,6 +11,8 @@ import com.bcipriano.pharmacysystem.model.repository.SaleRepository;
 import com.bcipriano.pharmacysystem.service.SaleItemService;
 import com.bcipriano.pharmacysystem.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -67,8 +69,8 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    public List<Sale> getSale() {
-        return saleRepository.findAll();
+    public Page<Sale> getSale(Pageable pageable) {
+        return saleRepository.findAll(pageable);
     }
 
     @Override

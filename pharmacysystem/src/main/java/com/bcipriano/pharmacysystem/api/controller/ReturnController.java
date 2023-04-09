@@ -7,12 +7,14 @@ import com.bcipriano.pharmacysystem.service.ReturnService;
 import com.bcipriano.pharmacysystem.service.SaleItemService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,9 +27,10 @@ public class ReturnController {
     private final SaleItemService saleItemService;
 
     @GetMapping
-    public ResponseEntity get() {
-        List<Return> returnList = returnService.getReturn();
-        return ResponseEntity.ok(returnList.stream().map(ReturnDTO::create).collect(Collectors.toList()));
+    public ResponseEntity get(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Return> returnPage = returnService.getReturn(pageable);
+        return ResponseEntity.ok(returnPage.stream().map(ReturnDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("{id}")

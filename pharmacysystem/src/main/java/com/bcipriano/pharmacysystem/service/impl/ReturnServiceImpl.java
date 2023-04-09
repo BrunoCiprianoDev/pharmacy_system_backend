@@ -6,6 +6,8 @@ import com.bcipriano.pharmacysystem.model.repository.ReturnRepository;
 import com.bcipriano.pharmacysystem.model.repository.SaleItemRepository;
 import com.bcipriano.pharmacysystem.service.ReturnService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,8 +55,8 @@ public class ReturnServiceImpl implements ReturnService {
     }
 
     @Override
-    public List<Return> getReturn() {
-        return returnRepository.findAll();
+    public Page<Return> getReturn(Pageable pageable) {
+        return returnRepository.findAll(pageable);
     }
 
     @Override

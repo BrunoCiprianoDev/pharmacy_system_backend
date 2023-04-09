@@ -9,6 +9,9 @@ import com.bcipriano.pharmacysystem.service.SaleItemService;
 import com.bcipriano.pharmacysystem.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +34,10 @@ public class SaleController {
     private final ClientService clientService;
 
     @GetMapping
-    public ResponseEntity get() {
-        List<Sale> saleList = saleService.getSale();
-        return ResponseEntity.ok(saleList.stream().map(SaleDTO::create).collect(Collectors.toList()));
+    public ResponseEntity get(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Sale> salePage = saleService.getSale(pageable);
+        return ResponseEntity.ok(salePage.stream().map(SaleDTO::create).collect(Collectors.toList()));
     }
 
     @DeleteMapping("{id}")

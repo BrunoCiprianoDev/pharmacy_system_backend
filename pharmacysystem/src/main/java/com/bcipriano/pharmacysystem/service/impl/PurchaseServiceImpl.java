@@ -7,6 +7,8 @@ import com.bcipriano.pharmacysystem.model.repository.PurchaseRepository;
 import com.bcipriano.pharmacysystem.model.repository.SupplierRepository;
 import com.bcipriano.pharmacysystem.service.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,8 +62,8 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public List<Purchase> getPurchase() {
-        return purchaseRepository.findAll();
+    public Page<Purchase> getPurchase(Pageable pageable) {
+        return purchaseRepository.findAll(pageable);
     }
 
     @Override

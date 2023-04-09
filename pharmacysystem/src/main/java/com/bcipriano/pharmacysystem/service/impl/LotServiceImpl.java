@@ -6,6 +6,8 @@ import com.bcipriano.pharmacysystem.model.repository.LotRepository;
 import com.bcipriano.pharmacysystem.model.repository.MerchandiseRepository;
 import com.bcipriano.pharmacysystem.model.repository.PurchaseRepository;
 import com.bcipriano.pharmacysystem.service.LotService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,8 +71,8 @@ public class LotServiceImpl implements LotService {
     }
 
     @Override
-    public List<Lot> getLot() {
-        return lotRepository.findAll();
+    public Page<Lot> getLot(Pageable pageable) {
+        return lotRepository.findAll(pageable);
     }
 
     @Override

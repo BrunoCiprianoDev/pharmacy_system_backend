@@ -1,6 +1,8 @@
 package com.bcipriano.pharmacysystem.service;
 
 import com.bcipriano.pharmacysystem.model.entity.Return;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +15,7 @@ public interface ReturnService {
 
     Return updateReturn(Return rtn);
 
-    List<Return> getReturn();
+    Page<Return> getReturn(Pageable pageable);
 
     Return getReturnBySaleItemId(Long saleId);
 
