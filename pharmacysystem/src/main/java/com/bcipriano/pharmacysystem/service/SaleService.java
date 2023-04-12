@@ -1,6 +1,7 @@
 package com.bcipriano.pharmacysystem.service;
 
 import com.bcipriano.pharmacysystem.model.entity.Sale;
+import com.bcipriano.pharmacysystem.model.entity.SaleItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,7 +11,7 @@ public interface SaleService {
 
     void validateSale(Sale sale);
 
-    Sale saveSale(Sale sale);
+    Sale saveSale(Sale sale, List<SaleItem> saleItems);
 
     Sale updateSale(Sale sale);
 

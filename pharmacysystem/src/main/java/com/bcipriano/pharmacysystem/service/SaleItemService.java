@@ -24,7 +24,11 @@ public interface SaleItemService {
 
     SaleItem saveSaleItem(SaleItem saleItem);
 
+    List<SaleItem> saveSaleItemList(List<SaleItem> saleItemList);
+
     SaleItem updateSaleItem(SaleItem saleItem);
+
+    List<SaleItem> getSaleItems();
 
     List<SaleItem> getSaleItemBySaleId(Long saleId);
 

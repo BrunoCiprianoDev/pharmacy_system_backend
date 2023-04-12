@@ -41,9 +41,10 @@ public class SaleItemRepositoryTest {
         SaleItem saleItemTwo = SaleItem.builder().sale(saleSaved).build();
         saleItemRepository.save(saleItemTwo);
 
-        List<SaleItem> listResponse = saleItemRepository.findSaleItemBySaleId(saleSaved.getId());
+        List<SaleItem> listResponse = saleItemRepository.findSaleItemsBySaleId(saleSaved.getId());
 
         Assertions.assertThat(listResponse).hasSize(2);
+        System.out.println(listResponse);
 
     }
 

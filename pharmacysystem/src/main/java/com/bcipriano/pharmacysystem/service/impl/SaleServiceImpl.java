@@ -14,9 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,13 +27,21 @@ import java.util.Optional;
 public class SaleServiceImpl implements SaleService {
 
     private SaleRepository saleRepository;
+
+    private SaleItemService saleItemService;
     private EmployeeRepository employeeRepository;
     private ClientRepository clientRepository;
     private LotRepository lotRepository;
 
     @Autowired
-    public SaleServiceImpl(SaleRepository saleRepository, EmployeeRepository employeeRepository, ClientRepository clientRepository, LotRepository lotRepository) {
+    public SaleServiceImpl(SaleRepository saleRepository,
+                           SaleItemService saleItemService,
+                           EmployeeRepository employeeRepository,
+                           ClientRepository clientRepository,
+                           LotRepository lotRepository
+    ) {
         this.saleRepository = saleRepository;
+        this.saleItemService =saleItemService;
         this.employeeRepository = employeeRepository;
         this.clientRepository = clientRepository;
         this.lotRepository = lotRepository;
@@ -38,10 +49,6 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public void validateSale(Sale sale) {
-
-        if (sale.getTotal() < 0) {
-            throw new BusinessRuleException("Valor inválido para o total.");
-        }
         if (sale.getEmployee() == null || !employeeRepository.existsById(sale.getEmployee().getId())) {
             throw new BusinessRuleException("Funcionário inválido.");
         }
@@ -53,10 +60,19 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    public Sale saveSale(Sale sale) {
+    @Transactional
+    public Sale saveSale(Sale sale, List<SaleItem> saleItems) {
         validateSale(sale);
-        sale.setSaleDate(LocalDate.now()); //Verificar comportamento no DB de produção <----
-        return saleRepository.save(sale);
+        sale.setSaleDate(LocalDate.now());
+
+        Sale saleSaved = saleRepository.save(sale);
+
+        for(SaleItem saleItem : saleItems) {
+            saleItem.setSale(saleSaved);
+            saleItemService.saveSaleItem(saleItem);
+        }
+
+        return sale;
     }
 
     @Override

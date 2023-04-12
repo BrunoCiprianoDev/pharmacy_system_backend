@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface SaleItemRepository extends JpaRepository<SaleItem, Long> {
 
-    List<SaleItem> findSaleItemBySaleId(@Param("saleId") Long saleId);
+    List<SaleItem> findSaleItemsBySaleId(@Param("saleId") Long saleId);
 
     List<SaleItem> findSaleItemByLotId(@Param("lotId") Long lotId);
 

@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -29,15 +31,23 @@ public class SaleDTO {
 
     private Client client;
 
-    private List<SaleItem> saleItems;
+    private List<SaleItemDTO> saleItemsDTO;
 
-    public static SaleDTO create(Sale sale){
+    public static SaleDTO create(Sale sale, List<SaleItem> saleItems){
         ModelMapper modelMapper = new ModelMapper();
         SaleDTO dto = modelMapper.map(sale, SaleDTO.class);
         dto.employeeId = sale.getEmployee().getId();
+
         if(sale.getClient() != null){
             dto.clientId = sale.getClient().getId();
         }
+
+        List<SaleItemDTO> saleItemDTOList = new ArrayList<>();
+        for(SaleItem saleItem : saleItems) {
+            saleItemDTOList.add(SaleItemDTO.create(saleItem));
+        }
+        dto.setSaleItemsDTO(saleItemDTOList);
+
         return dto;
     }
 

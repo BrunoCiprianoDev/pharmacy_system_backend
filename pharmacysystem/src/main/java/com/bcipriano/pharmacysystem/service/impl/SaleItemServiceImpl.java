@@ -16,14 +16,16 @@ import java.util.Optional;
 @Service
 public class SaleItemServiceImpl implements SaleItemService {
 
-
     private SaleItemRepository saleItemRepository;
 
     private SaleRepository saleRepository;
     private LotRepository lotRepository;
 
     @Autowired
-    public SaleItemServiceImpl(SaleItemRepository saleItemRepository, SaleRepository saleRepository, LotRepository lotRepository) {
+    public SaleItemServiceImpl(SaleItemRepository saleItemRepository,
+                               SaleRepository saleRepository,
+                               LotRepository lotRepository
+    ) {
         this.saleItemRepository = saleItemRepository;
         this.saleRepository = saleRepository;
         this.lotRepository = lotRepository;
@@ -32,14 +34,29 @@ public class SaleItemServiceImpl implements SaleItemService {
     @Override
     @Transactional
     public SaleItem saveSaleItem(SaleItem saleItem) {
-        if(saleRepository.existsById(saleItem.getSale().getId())){
+        if(!saleRepository.existsById(saleItem.getSale().getId())){
             throw new BusinessRuleException("Esse item não pertence a um venda cadastrada.");
         }
-        if (saleItemRepository.existsById(saleItem.getId())) {
+        if (saleItem.getId() != null && saleItemRepository.existsById(saleItem.getId())) {
             throw new BusinessRuleException("Já existe item venda cadastrada com esse id");
         }
         SaleItemService.validateSaleItem(saleItem, lotRepository);
         return saleItemRepository.save(saleItem);
+    }
+
+    @Override
+    @Transactional
+    public List<SaleItem> saveSaleItemList(List<SaleItem> saleItemList) {
+        for(SaleItem saleItem : saleItemList) {
+            if(!saleRepository.existsById(saleItem.getSale().getId())){
+                throw new BusinessRuleException("Esse item não pertence a um venda cadastrada.");
+            }
+            if (saleItemRepository.existsById(saleItem.getId())) {
+                throw new BusinessRuleException("Já existe item venda cadastrada com esse id");
+            }
+            SaleItemService.validateSaleItem(saleItem, lotRepository);
+        }
+        return saleItemRepository.saveAll(saleItemList);
     }
 
     @Override
@@ -56,11 +73,16 @@ public class SaleItemServiceImpl implements SaleItemService {
     }
 
     @Override
+    public List<SaleItem> getSaleItems() {
+        return saleItemRepository.findAll();
+    }
+
+    @Override
     public List<SaleItem> getSaleItemBySaleId(Long saleId) {
         if(!saleRepository.existsById(saleId)){
             throw new BusinessRuleException("Item venda com id inválido.");
         }
-        return saleItemRepository.findSaleItemBySaleId(saleId);
+        return saleItemRepository.findSaleItemsBySaleId(saleId);
     }
 
     @Override

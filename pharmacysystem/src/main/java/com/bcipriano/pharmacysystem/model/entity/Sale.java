@@ -26,8 +26,6 @@ public class Sale {
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate saleDate = LocalDate.now();
 
-    private Double total;
-
     @ManyToOne
     @JoinColumn(name = "id_employee")
     private Employee employee;
