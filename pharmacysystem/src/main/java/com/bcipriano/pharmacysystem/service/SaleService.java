@@ -11,7 +11,7 @@ public interface SaleService {
 
     void validateSale(Sale sale);
 
-    Sale saveSale(Sale sale, List<SaleItem> saleItems);
+    void saveSale(Sale sale, List<SaleItem> saleItems);
 
     Sale updateSale(Sale sale);
 

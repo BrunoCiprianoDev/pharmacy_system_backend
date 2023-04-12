@@ -61,7 +61,7 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     @Transactional
-    public Sale saveSale(Sale sale, List<SaleItem> saleItems) {
+    public void saveSale(Sale sale, List<SaleItem> saleItems) {
         validateSale(sale);
         sale.setSaleDate(LocalDate.now());
 
@@ -71,8 +71,6 @@ public class SaleServiceImpl implements SaleService {
             saleItem.setSale(saleSaved);
             saleItemService.saveSaleItem(saleItem);
         }
-
-        return sale;
     }
 
     @Override

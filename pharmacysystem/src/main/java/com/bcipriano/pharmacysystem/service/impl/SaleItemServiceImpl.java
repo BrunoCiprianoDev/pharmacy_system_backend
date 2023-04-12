@@ -51,7 +51,7 @@ public class SaleItemServiceImpl implements SaleItemService {
             if(!saleRepository.existsById(saleItem.getSale().getId())){
                 throw new BusinessRuleException("Esse item não pertence a um venda cadastrada.");
             }
-            if (saleItemRepository.existsById(saleItem.getId())) {
+            if (saleItem.getId() != null && saleItemRepository.existsById(saleItem.getId())) {
                 throw new BusinessRuleException("Já existe item venda cadastrada com esse id");
             }
             SaleItemService.validateSaleItem(saleItem, lotRepository);
