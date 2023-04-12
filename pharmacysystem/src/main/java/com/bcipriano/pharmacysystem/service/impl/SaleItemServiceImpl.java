@@ -106,4 +106,12 @@ public class SaleItemServiceImpl implements SaleItemService {
         }
         saleItemRepository.deleteById(id);
     }
+
+    @Override
+    public void deleteBySaleId(Long saleId) {
+        if(!saleRepository.existsById(saleId)) {
+            throw new BusinessRuleException("Venda com id inválido.");
+        }
+        saleItemRepository.deleteBySaleId(saleId);
+    }
 }

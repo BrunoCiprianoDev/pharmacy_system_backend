@@ -15,4 +15,6 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Long> {
 
     Optional<SaleItem> findSaleItemById(@Param("id") Long id);
 
+    void deleteBySaleId(@Param("saleId") Long saleId);
+
 }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -69,9 +70,11 @@ public class SaleController {
     }
 
     @DeleteMapping("{id}")
+    @Transactional
     public ResponseEntity delete(@PathVariable("id") Long id){
         try {
-            saleService.getSaleById(id);
+            saleItemService.deleteBySaleId(id);
+            saleService.deleteSale(id);
             return ResponseEntity.ok("Venda excluída com sucesso!");
         } catch (RuntimeException runtimeException) {
             return ResponseEntity.badRequest().body(runtimeException.getMessage());

@@ -103,8 +103,8 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public void deleteSale(Long id) {
-        if (saleRepository.existsById(id)) {
-            throw new InvalidIdException();
+        if (!saleRepository.existsById(id)) {
+            throw new BusinessRuleException("Item venda com id inválido.");
         }
         saleRepository.deleteById(id);
     }

@@ -38,4 +38,6 @@ public interface SaleItemService {
 
     void deleteSaleItem(Long id);
 
+    void deleteBySaleId(Long saleId);
+
 }

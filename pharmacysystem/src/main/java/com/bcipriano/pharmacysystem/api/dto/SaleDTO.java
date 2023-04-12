@@ -25,21 +25,27 @@ public class SaleDTO {
 
     private Long employeeId;
 
-    private Employee employee;
+    private String employeeName;
 
     private Long clientId;
 
-    private Client client;
+    private String clientName;
+
+    private String clientCpf;
 
     private List<SaleItemDTO> saleItemsDTO;
 
     public static SaleDTO create(Sale sale, List<SaleItem> saleItems){
         ModelMapper modelMapper = new ModelMapper();
         SaleDTO dto = modelMapper.map(sale, SaleDTO.class);
+
         dto.employeeId = sale.getEmployee().getId();
+        dto.employeeName = sale.getEmployee().getName();
 
         if(sale.getClient() != null){
             dto.clientId = sale.getClient().getId();
+            dto.clientName = sale.getClient().getName();
+            dto.clientCpf = sale.getClient().getCpf();
         }
 
         List<SaleItemDTO> saleItemDTOList = new ArrayList<>();

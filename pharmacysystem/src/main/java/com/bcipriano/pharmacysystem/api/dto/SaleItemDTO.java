@@ -22,8 +22,6 @@ public class SaleItemDTO {
 
     private Long saleId;
 
-    private Sale sale;
-
     private Long lotId;
 
     private Lot lot;
