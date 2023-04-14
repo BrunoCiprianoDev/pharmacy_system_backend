@@ -37,7 +37,8 @@ public class SaleController {
     private final ClientService clientService;
 
     @GetMapping
-    public ResponseEntity get(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity get(@RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Sale> salePage = saleService.getSale(pageable);
 
@@ -48,6 +49,20 @@ public class SaleController {
         }
 
         return ResponseEntity.ok(saleDTOList);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity get(@PathVariable("id") long id) {
+
+        try {
+            Sale sale = saleService.getSaleById(id);
+            List<SaleItem> saleItems = saleItemService.getSaleItemBySaleId(id);
+            SaleDTO saleDTO = SaleDTO.create(sale, saleItems);
+            return ResponseEntity.ok(saleDTO);
+        } catch(RuntimeException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
+
     }
 
     @PostMapping
