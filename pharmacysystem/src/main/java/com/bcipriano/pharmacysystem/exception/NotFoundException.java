@@ -1,13 +1,21 @@
 package com.bcipriano.pharmacysystem.exception;
 
-public class NotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
-    public NotFoundException(){
-        super("Objeto não encontrado.");
+public class NotFoundException extends RuntimeException{
+
+    private HttpStatus status = HttpStatus.NOT_FOUND;
+
+    public NotFoundException() {
+        super("Invalid id.");
     }
 
     public NotFoundException(String message) {
         super(message);
+    }
+
+    public HttpStatus getStatus() {
+        return this.status;
     }
 
 }

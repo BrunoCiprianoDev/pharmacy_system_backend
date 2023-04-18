@@ -1,14 +1,13 @@
 package com.bcipriano.pharmacysystem.model.entity;
 
 import com.bcipriano.pharmacysystem.model.entity.enums.Department;
+import com.bcipriano.pharmacysystem.model.entity.enums.StorageTemperature;
 import com.bcipriano.pharmacysystem.model.entity.enums.Stripe;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "merchandise", schema = "management")
@@ -24,6 +23,7 @@ public class Merchandise {
 
     private String name;
 
+    @Column(name = "code", unique = true)
     private String code;
 
     @Enumerated(value = EnumType.STRING)
@@ -39,15 +39,12 @@ public class Merchandise {
     private Stripe stripe;
 
     @Column(name = "storage_temperature")
-    private Float storageTemperature;
+    private StorageTemperature storageTemperature;
 
     private String rms;
 
     @Column(name = "minimum_stock")
     private Integer minimumStock;
-
-    @Column(name = "current_stock")
-    private Integer currentStock;
 
     @Column(name = "maximum_stock")
     private Integer maximumStock;

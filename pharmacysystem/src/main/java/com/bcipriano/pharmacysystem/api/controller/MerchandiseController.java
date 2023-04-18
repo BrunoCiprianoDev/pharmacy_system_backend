@@ -2,8 +2,14 @@ package com.bcipriano.pharmacysystem.api.controller;
 
 import com.bcipriano.pharmacysystem.api.dto.MerchandiseDTO;
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
+import com.bcipriano.pharmacysystem.exception.NotFoundException;
+import com.bcipriano.pharmacysystem.model.entity.DiscountGroup;
 import com.bcipriano.pharmacysystem.model.entity.Merchandise;
+import com.bcipriano.pharmacysystem.model.entity.enums.Department;
+import com.bcipriano.pharmacysystem.model.entity.enums.StorageTemperature;
+import com.bcipriano.pharmacysystem.model.entity.enums.Stripe;
 import com.bcipriano.pharmacysystem.service.DiscountGroupService;
+import com.bcipriano.pharmacysystem.service.LotService;
 import com.bcipriano.pharmacysystem.service.MerchandiseService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,8 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,31 +38,49 @@ public class MerchandiseController {
         Page<Merchandise> merchandisePage = merchandiseService.getMerchandise(pageable);
         return ResponseEntity.ok(merchandisePage.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
     }
+
     @GetMapping("/search")
     public ResponseEntity get(@RequestParam("query") String query,
                               @RequestParam(defaultValue = "0") int page,
                               @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Merchandise> merchandisePage = merchandiseService.findMerchandiseByQuery(query, pageable);
+        return ResponseEntity.ok(merchandisePage.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
+    }
 
-        int startItem = size * page;
-        List<Merchandise> pageList;
-        List<Merchandise> merchandises = merchandiseService.findMerchandiseByQuery(query);
-
-        if(merchandises.size() < startItem) {
-            pageList = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + size, merchandises.size());
-            pageList = merchandises.subList(startItem, toIndex);
+    @GetMapping("/discountGroupId/{id}")
+    public ResponseEntity getByDiscountGroupId(@PathVariable("id") Long id,
+                                               @RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        try {
+            Page<Merchandise> merchandisePage = merchandiseService.findMerchandiseByDiscountGroupId(id, pageable);
+            return ResponseEntity.ok(merchandisePage.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
+        } catch (NotFoundException notFoundException) {
+            return ResponseEntity.badRequest().body(notFoundException.getMessage());
         }
+    }
 
-        return ResponseEntity.ok(pageList.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
+    @GetMapping("/discountGroupName")
+    public ResponseEntity getByDiscountGroupName(@RequestParam("name") String name,
+                                                 @RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Merchandise> merchandisePage = merchandiseService.findMerchandiseByDiscountGroupName(name, pageable);
+        return ResponseEntity.ok(merchandisePage.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/merchandiseCode")
+    public ResponseEntity getByMerchandiseCode(@RequestParam("code") String code){
+        Optional<Merchandise> merchandise = merchandiseService.findMerchandiseByCode(code);
+        return ResponseEntity.ok(merchandise.map(MerchandiseDTO::create));
     }
 
     @GetMapping("{id}")
     public ResponseEntity get(@PathVariable("id") Long id) {
         try {
-            Merchandise merchandiseResponse = merchandiseService.getMerchandiseById(id);
-            MerchandiseDTO merchandiseDTO = MerchandiseDTO.create(merchandiseResponse);
-            return ResponseEntity.ok(merchandiseDTO);
+            Optional<Merchandise> merchandise = merchandiseService.getMerchandiseById(id);
+            return ResponseEntity.ok(merchandise.map(MerchandiseDTO::create));
         } catch (BusinessRuleException businessRuleException) {
             return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
@@ -97,11 +120,19 @@ public class MerchandiseController {
     }
 
     public Merchandise converter(MerchandiseDTO merchandiseDTO) {
+
         ModelMapper modelMapper = new ModelMapper();
         Merchandise merchandise = modelMapper.map(merchandiseDTO, Merchandise.class);
-        if (merchandiseDTO.getIdDiscountGroup() != null) {
-            merchandise.setDiscountGroup(discountGroupService.getDiscountGroupById(merchandiseDTO.getIdDiscountGroup()));
+
+        if (merchandiseDTO.getDiscountGroupId() != null) {
+            Optional<DiscountGroup> discountGroupServiceOptional = discountGroupService.getDiscountGroupById(merchandiseDTO.getDiscountGroupId());
+            merchandise.setDiscountGroup(discountGroupServiceOptional.get());
         }
+
+        merchandise.setDepartment(Department.fromString(merchandiseDTO.getDepartment()));
+        merchandise.setStripe(Stripe.fromString(merchandiseDTO.getStripe()));
+        merchandise.setStorageTemperature(StorageTemperature.fromString(merchandiseDTO.getStorageTemperature()));
+
         return merchandise;
     }
 }

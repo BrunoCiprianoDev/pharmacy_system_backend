@@ -1,7 +1,6 @@
 package com.bcipriano.pharmacysystem.api.dto;
 
 import com.bcipriano.pharmacysystem.model.entity.Client;
-import com.bcipriano.pharmacysystem.model.entity.Address;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,6 +40,7 @@ public class ClientDTO {
     private String email;
 
     public static ClientDTO create(Client client) {
+
         ModelMapper modelMapper = new ModelMapper();
         ClientDTO clientDTO = modelMapper.map(client, ClientDTO.class);
 

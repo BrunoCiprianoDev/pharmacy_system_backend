@@ -8,39 +8,39 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class LotDTO {
-     private Long id;
+    private Long id;
 
-     private String number;
+    private String number;
 
-     private String expirationDate;
+    private String expirationDate;
 
-     private Long purchaseId;
+    private Long purchaseId;
 
-     private Purchase purchase;
+    private String noteNumberPurchase;
 
-     private Long merchandiseId;
+    private Long merchandiseId;
 
-     private Merchandise merchandise;
+    private Merchandise merchandise;
 
-     private Integer units;
+    private Integer units;
 
-     public static LotDTO create(Lot lot) {
-          ModelMapper modelMapper = new ModelMapper();
-          LotDTO lotDto = modelMapper.map(lot, LotDTO.class);
+    public static LotDTO create(Lot lot) {
+        ModelMapper modelMapper = new ModelMapper();
+        LotDTO lotDto = modelMapper.map(lot, LotDTO.class);
 
-          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-          lotDto.expirationDate = lot.getExpirationDate().format(formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        lotDto.expirationDate = lot.getExpirationDate().format(formatter);
 
-          lotDto.purchaseId = lot.getPurchase().getId();
-          lotDto.merchandiseId = lot.getMerchandise().getId();
-          return lotDto;
-     }
+        lotDto.purchaseId = lot.getPurchase().getId();
+        lotDto.merchandiseId = lot.getMerchandise().getId();
+        lotDto.noteNumberPurchase = lot.getPurchase().getNoteNumber();
+        return lotDto;
+    }
 
 }

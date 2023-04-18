@@ -2,10 +2,7 @@ package com.bcipriano.pharmacysystem.api.dto;
 
 import com.bcipriano.pharmacysystem.model.entity.DiscountGroup;
 import com.bcipriano.pharmacysystem.model.entity.Merchandise;
-import com.bcipriano.pharmacysystem.model.entity.enums.Department;
-import com.bcipriano.pharmacysystem.model.entity.enums.Stripe;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,21 +20,25 @@ public class MerchandiseDTO {
 
     private String department;
 
+    private String departmentValue;
+
     private String classification;
 
     private String brand;
 
     private String formule;
 
-    private Stripe stripe;
+    private String stripe;
 
-    private Float storageTemperature;
+    private String stripeValue;
+
+    private String storageTemperature;
+
+    private String storageTemperatureValue;
 
     private String rms;
 
     private Integer minimumStock;
-
-    private Integer currentStock;
 
     private Integer maximumStock;
 
@@ -49,18 +50,25 @@ public class MerchandiseDTO {
 
     private String description;
 
+    private Long discountGroupId;
+
     private DiscountGroup discountGroup;
 
-    private Long idDiscountGroup;
 
     public static MerchandiseDTO create(Merchandise merchandise){
+
         ModelMapper modelMapper = new ModelMapper();
         MerchandiseDTO merchandiseDTO = modelMapper.map(merchandise, MerchandiseDTO.class);
+
         if(merchandise.getDiscountGroup() != null){
-            merchandiseDTO.idDiscountGroup = merchandise.getDiscountGroup().getId();
+            merchandiseDTO.discountGroupId = merchandise.getDiscountGroup().getId();
         }
+
+        merchandiseDTO.storageTemperatureValue = merchandise.getStorageTemperature().getValue();
+        merchandiseDTO.stripeValue = merchandise.getStripe().getValue();
+        merchandiseDTO.departmentValue = merchandise.getDepartment().getValue();
+
         return merchandiseDTO;
     }
-
 
 }

@@ -2,7 +2,10 @@ package com.bcipriano.pharmacysystem.api.controller;
 
 import com.bcipriano.pharmacysystem.api.dto.LossDTO;
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
+import com.bcipriano.pharmacysystem.exception.NotFoundException;
+import com.bcipriano.pharmacysystem.model.entity.Employee;
 import com.bcipriano.pharmacysystem.model.entity.Loss;
+import com.bcipriano.pharmacysystem.model.entity.Lot;
 import com.bcipriano.pharmacysystem.service.EmployeeService;
 import com.bcipriano.pharmacysystem.service.LossService;
 import com.bcipriano.pharmacysystem.service.LotService;
@@ -16,8 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -42,24 +44,28 @@ public class LossController {
     public ResponseEntity get(@RequestParam("query") String query,
                               @RequestParam(defaultValue = "0") int page,
                               @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Loss> lossPage = lossService.getLossByQueryLotNumber(query, pageable);
+        return ResponseEntity.ok(lossPage.stream().map(LossDTO::create).collect(Collectors.toList()));
+    }
 
-        int startItem = size * page;
-        List<Loss> pageList;
-        List<Loss> losses = lossService.getLossByQuery(query);
+    @GetMapping("/lotId/{id}")
+    public ResponseEntity getLossByLotId(@PathVariable("id") Long id,
+                                         @RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Loss> lossPage = lossService.getLossByLotid(id, pageable);
+            return ResponseEntity.ok(lossPage.stream().map(LossDTO::create).collect(Collectors.toList()));
 
-        if(losses.size() < startItem) {
-            pageList = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + size, losses.size());
-            pageList = losses.subList(startItem, toIndex);
+        } catch (NotFoundException notFoundException) {
+            return ResponseEntity.badRequest().body(notFoundException.getMessage());
         }
-
-        return ResponseEntity.ok(pageList.stream().map(LossDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity get(@PathVariable("id") Long id){
-        try{
+    public ResponseEntity get(@PathVariable("id") Long id) {
+        try {
             Loss lossResponse = lossService.getLossById(id);
             LossDTO lossDTO = LossDTO.create(lossResponse);
             return ResponseEntity.ok(lossDTO);
@@ -67,26 +73,27 @@ public class LossController {
             return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
     }
+
     @PostMapping
     public ResponseEntity post(@RequestBody LossDTO lossDTO) {
         try {
-            Loss loss = converter(lossDTO);
+            Loss loss = converter(lossDTO, employeeService, lotService);
             lossService.saveLoss(loss);
-            return new ResponseEntity("Perda armazenada com sucesso!", HttpStatus.CREATED);
-        } catch (BusinessRuleException businessRuleException) {
-            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
+            return new ResponseEntity("Registro de perda armazenada com sucesso!", HttpStatus.CREATED);
+        } catch (RuntimeException runtimeException) {
+            return ResponseEntity.badRequest().body(runtimeException.getMessage());
         }
     }
 
     @PutMapping("{id}")
     public ResponseEntity update(@PathVariable("id") Long id, @RequestBody LossDTO lossDTO) {
         try {
-            Loss loss = converter(lossDTO);
+            Loss loss = converter(lossDTO, employeeService, lotService);
             loss.setId(id);
-            lossService.saveLoss(loss);
+            lossService.updateLoss(loss);
             return ResponseEntity.ok("Registro de perda atualizado com sucesso.");
-        } catch (BusinessRuleException businessRuleException) {
-            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
+        } catch (RuntimeException runtimeException) {
+            return ResponseEntity.badRequest().body(runtimeException.getMessage());
         }
     }
 
@@ -100,18 +107,20 @@ public class LossController {
         }
     }
 
-    public Loss converter(LossDTO lossDTO) {
+    public static Loss converter(LossDTO lossDTO, EmployeeService employeeService, LotService lotService) {
         ModelMapper modelMapper = new ModelMapper();
         Loss loss = modelMapper.map(lossDTO, Loss.class);
 
         loss.setRegisterDate(LocalDate.parse(lossDTO.getRegisterDate()));
 
         if (lossDTO.getLotId() != null) {
-            loss.setLot(lotService.getLotById(lossDTO.getLotId()));
+            Optional<Lot> lot = lotService.getLotById(lossDTO.getLotId());
+            loss.setLot(lot.get());
         }
 
         if (lossDTO.getEmployeeId() != null) {
-            loss.setEmployee(employeeService.getEmployeeById(lossDTO.getEmployeeId()));
+            Optional<Employee> employee = employeeService.getEmployeeById(lossDTO.getEmployeeId());
+            loss.setEmployee(employee.get());
         }
         return loss;
     }

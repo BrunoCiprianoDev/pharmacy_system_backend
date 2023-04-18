@@ -26,7 +26,7 @@ public class Purchase {
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
     private LocalDate purchaseDate;
 
-    @Column(name = "note_number")
+    @Column(name = "note_number", unique = true)
     private String noteNumber;
 
     private Double total;

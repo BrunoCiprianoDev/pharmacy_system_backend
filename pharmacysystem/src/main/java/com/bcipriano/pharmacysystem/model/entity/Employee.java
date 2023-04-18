@@ -1,7 +1,6 @@
 package com.bcipriano.pharmacysystem.model.entity;
 
-import com.bcipriano.pharmacysystem.model.entity.enums.Profile;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.bcipriano.pharmacysystem.model.entity.enums.Position;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +23,7 @@ public class Employee {
 
     private String name;
 
+    @Column(name = "cpf", unique = true)
     private String cpf;
 
     @Column(name = "born_date")
@@ -42,9 +42,6 @@ public class Employee {
 
     private String email;
 
-    @JsonIgnore
-    private String password;
-
     @Enumerated(value = EnumType.STRING)
-    private Profile profile;
+    private Position position;
 }

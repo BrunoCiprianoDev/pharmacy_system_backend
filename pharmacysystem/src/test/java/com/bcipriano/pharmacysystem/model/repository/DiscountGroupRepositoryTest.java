@@ -7,11 +7,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -22,77 +24,71 @@ public class DiscountGroupRepositoryTest {
     @Autowired
     DiscountGroupRepository discountGroupRepository;
 
+    private final Pageable pageable = PageRequest.of(0, 10);
+
     @Test
-    public void testMustReturnGroupDiscountByQuery(){
+    public void testDiscountGroupByQuery() {
 
-        //Create context
-        DiscountGroup discountGroupOne = DiscountGroup.builder().name("NameDiscountOne").build();
-        discountGroupRepository.save(discountGroupOne);
+        DiscountGroup discountGroup1 = createDiscountGroup("DiscountGroupOne");
+        DiscountGroup discountGroup2 = createDiscountGroup("DiscountGroupTwo");
+        DiscountGroup discountGroup3 = createDiscountGroup("DiscountGroupThree");
+        DiscountGroup discountGroup4 = createDiscountGroup("DiscountGroupFour");
 
-        DiscountGroup discountGroupTwo = DiscountGroup.builder().name("NameDiscountTwo").build();
-        discountGroupRepository.save(discountGroupTwo);
+        DiscountGroup discountGroup1Saved = discountGroupRepository.save(discountGroup1);
+        discountGroupRepository.save(discountGroup2);
+        discountGroupRepository.save(discountGroup3);
+        discountGroupRepository.save(discountGroup4);
 
-        DiscountGroup discountGroupThree = DiscountGroup.builder().name("NameDiscountThree").build();
-        discountGroupRepository.save(discountGroupThree);
+        Page<DiscountGroup> result1 = discountGroupRepository.findDiscountGroupByQuery("DiscountGroup", pageable);
+        Assertions.assertThat(result1.getContent()).hasSize(4);
 
-        //Execute
-        List<DiscountGroup> listResponse = discountGroupRepository.findDiscountGroupByQuery("Discount");
-
-        //Verification
-        Assertions.assertThat(listResponse).hasSize(3);
+        Page<DiscountGroup> result2 = discountGroupRepository.findDiscountGroupByQuery("One", pageable);
+        Assertions.assertThat(result2.getContent().get(0)).isEqualTo(discountGroup1Saved);
 
     }
 
     @Test
-    public void testMustReturnAListOfDiscountsByStartDate() {
+    public void testDiscountGroupByStartDate() {
 
-        //Create context
-        DiscountGroup discountOne = DiscountGroup.builder().startDate(LocalDate.of(2023, 3, 2)).build();
-        discountGroupRepository.save(discountOne);
+        String statDate = "2023-04-14";
+        String finalDate = "2024-04-14";
 
-        DiscountGroup discountGroupTwo = DiscountGroup.builder().startDate(LocalDate.of(2023, 3, 2)).build();
-        discountGroupRepository.save(discountGroupTwo);
+        DiscountGroup discountGroup = createDiscountGroup(statDate, finalDate);
 
-        //Execute
-        List<DiscountGroup> listResponse = discountGroupRepository.findByStartDate(LocalDate.of(2023, 3, 2));
+        DiscountGroup discountGroupSaved = discountGroupRepository.save(discountGroup);
 
-        //Verification
-        Assertions.assertThat(listResponse).hasSize(2);
+        Page<DiscountGroup> result = discountGroupRepository.findByStartDate(discountGroupSaved.getStartDate(), pageable);
+
+        Assertions.assertThat(result.getContent().get(0)).isEqualTo(discountGroupSaved);
 
     }
 
     @Test
-    public void testMustReturnAListOfDiscountsByFinalDate() {
+    public void testDiscountGroupByFinalDate() {
 
-        //Create context
-        DiscountGroup discountOne = DiscountGroup.builder().finalDate(LocalDate.of(2023, 3, 2)).build();
-        discountGroupRepository.save(discountOne);
+        String statDate = "2023-04-14";
+        String finalDate = "2024-04-14";
 
-        DiscountGroup discountGroupTwo = DiscountGroup.builder().finalDate(LocalDate.of(2023, 3, 2)).build();
-        discountGroupRepository.save(discountGroupTwo);
+        DiscountGroup discountGroup = createDiscountGroup(statDate, finalDate);
 
-        //Execute
-        List<DiscountGroup> listResponse = discountGroupRepository.findByFinalDate(LocalDate.of(2023, 3, 2));
+        DiscountGroup discountGroupSaved = discountGroupRepository.save(discountGroup);
 
-        //Verification
-        Assertions.assertThat(listResponse).hasSize(2);
+        Page<DiscountGroup> result = discountGroupRepository.findByFinalDate(discountGroupSaved.getFinalDate(), pageable);
+
+        Assertions.assertThat(result.getContent().get(0)).isEqualTo(discountGroupSaved);
 
     }
 
-    @Test
-    public void testMustReturnTrueOrFalseByDiscountGroupName(){
-
-        String name = "Name";
-        String nameInvalid = "NameInvalid";
-
-        //Create context
-        discountGroupRepository.save(DiscountGroup.builder().name(name).build());
-
-        //Verification
-        Assertions.assertThat(discountGroupRepository.existsByName(name)).isTrue();
-        Assertions.assertThat(discountGroupRepository.existsByName(nameInvalid)).isFalse();
-
+    private DiscountGroup createDiscountGroup(String name) {
+        return DiscountGroup.builder().name(name).build();
     }
 
+    private DiscountGroup createDiscountGroup(String startDate, String finalDate) {
+        return DiscountGroup
+                .builder()
+                .startDate(LocalDate.parse(startDate))
+                .finalDate(LocalDate.parse(finalDate))
+                .build();
+    }
 
 }

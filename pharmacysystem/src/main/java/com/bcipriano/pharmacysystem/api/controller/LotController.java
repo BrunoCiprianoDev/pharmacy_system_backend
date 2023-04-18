@@ -1,9 +1,11 @@
 package com.bcipriano.pharmacysystem.api.controller;
 
-
 import com.bcipriano.pharmacysystem.api.dto.LotDTO;
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
+import com.bcipriano.pharmacysystem.exception.NotFoundException;
 import com.bcipriano.pharmacysystem.model.entity.Lot;
+import com.bcipriano.pharmacysystem.model.entity.Merchandise;
+import com.bcipriano.pharmacysystem.model.entity.Purchase;
 import com.bcipriano.pharmacysystem.service.LotService;
 import com.bcipriano.pharmacysystem.service.MerchandiseService;
 import com.bcipriano.pharmacysystem.service.PurchaseService;
@@ -17,8 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -43,57 +44,55 @@ public class LotController {
     public ResponseEntity get(@RequestParam("query") String query,
                               @RequestParam(defaultValue = "0") int page,
                               @RequestParam(defaultValue = "10") int size) {
-
-        int startItem = size * page;
-        List<Lot> pageList;
-        List<Lot> lotList = lotService.getLotsByPurchaseNoteNumber(query);
-
-        if (lotList.size() < startItem) {
-            pageList = Collections.emptyList();
-        } else {
-            int index = Math.min(startItem + size, lotList.size());
-            pageList = lotList.subList(startItem, index);
-        }
-
-        return ResponseEntity.ok(pageList.stream().map(LotDTO::create).collect(Collectors.toList()));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Lot> lotPage = lotService.getLotsByPurchaseNoteNumber(query, pageable);
+        return ResponseEntity.ok(lotPage.stream().map(LotDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/purchase/{id}")
     public ResponseEntity getByPurchaseId(@PathVariable("id") long id,
                                           @RequestParam(defaultValue = "0") int page,
                                           @RequestParam(defaultValue = "10") int size) {
-
-        int startItem = size * page;
-        List<Lot> pageList;
-        List<Lot> lotList = lotService.getLotsByPurchaseId(id);
-
-        if (lotList.size() < startItem) {
-            pageList = Collections.emptyList();
-        } else {
-            int index = Math.min(startItem + size, lotList.size());
-            pageList = lotList.subList(startItem, index);
-        }
-
-        return ResponseEntity.ok(pageList.stream().map(LotDTO::create).collect(Collectors.toList()));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Lot> lotPage = lotService.getLotsByPurchaseId(id, pageable);
+        return ResponseEntity.ok(lotPage.stream().map(LotDTO::create).collect(Collectors.toList()));
     }
 
-    @GetMapping("/merchandise/{id}")
-    public ResponseEntity getByMerchandiseId(@PathVariable("id") long id,
+    @GetMapping("/merchandise/{merchandiseId}")
+    public ResponseEntity getByMerchandiseId(@PathVariable("merchandiseId") long merchandiseId,
                                              @RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Lot> lotPage = lotService.getLotsByMerchandiseId(merchandiseId, pageable);
+        return ResponseEntity.ok(lotPage.stream().map(LotDTO::create).collect(Collectors.toList()));
+    }
 
-        int startItem = size * page;
-        List<Lot> pageList;
-        List<Lot> lotList = lotService.getLotsByMerchandiseId(id);
-
-        if (lotList.size() < startItem) {
-            pageList = Collections.emptyList();
-        } else {
-            int index = Math.min(startItem + size, lotList.size());
-            pageList = lotList.subList(startItem, index);
+    @GetMapping("/getUnitsByMerchandiseId/{merchandiseId}")
+    public ResponseEntity getUnitsByMerchandiseId(@PathVariable("merchandiseId") long merchandiseId){
+        try {
+            Integer units = lotService.getCurrentStockByMerchandiseId(merchandiseId);
+            return ResponseEntity.ok(units);
+        } catch(NotFoundException notFoundException) {
+            return ResponseEntity.badRequest().body(notFoundException.getMessage());
         }
+    }
+    @GetMapping("/expiringLotsByDays/{days}")
+    public ResponseEntity getLotsByExpiring(@PathVariable("days") Integer days,
+                                            @RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Lot> lotPage = lotService.getLotExpiringWithinDays(days, pageable);
+        return ResponseEntity.ok(lotPage.stream().map(LotDTO::create).collect(Collectors.toList()));
+    }
 
-        return ResponseEntity.ok(pageList.stream().map(LotDTO::create).collect(Collectors.toList()));
+    @GetMapping("{id}")
+    public ResponseEntity getLotById(@PathVariable("id") long id){
+        try {
+            Optional<Lot> lot = lotService.getLotById(id);
+            return ResponseEntity.ok(lot.map(LotDTO::create));
+        }catch(BusinessRuleException businessRuleException){
+            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
+        }
     }
 
     @PostMapping()
@@ -136,14 +135,13 @@ public class LotController {
         lot.setExpirationDate(LocalDate.parse(lotDTO.getExpirationDate()));
 
         if (lotDTO.getPurchaseId() != null) {
-            lot.setMerchandise(merchandiseService.getMerchandiseById(lotDTO.getMerchandiseId()));
+            Optional<Merchandise> merchandise = merchandiseService.getMerchandiseById(lotDTO.getMerchandiseId());
+            lot.setMerchandise(merchandise.get());
         }
         if (lotDTO.getPurchaseId() != null) {
-            lot.setPurchase(purchaseService.getPurchaseById(lotDTO.getPurchaseId()));
+            Optional<Purchase> purchase = purchaseService.getPurchaseById(lotDTO.getPurchaseId());
+            lot.setPurchase(purchase.get());
         }
         return lot;
     }
 }
-
-
-//INSERT INTO management.purchase (note_number, purchase_date, total, id_supplier) VALUES ('12345', '2023-04-01', 2599, 4);

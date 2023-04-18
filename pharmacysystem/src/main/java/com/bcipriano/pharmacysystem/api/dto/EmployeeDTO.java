@@ -1,15 +1,12 @@
 package com.bcipriano.pharmacysystem.api.dto;
 
 import com.bcipriano.pharmacysystem.model.entity.Employee;
-import com.bcipriano.pharmacysystem.model.entity.Address;
-import com.bcipriano.pharmacysystem.model.entity.enums.Profile;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.bcipriano.pharmacysystem.model.entity.enums.Position;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Data
@@ -45,11 +42,12 @@ public class EmployeeDTO {
 
     private String email;
 
-    private String password;
+    private String position;
 
-    private String profile;
+    private String positionValue;
 
     public static EmployeeDTO create(Employee employee) {
+
         ModelMapper modelMapper = new ModelMapper();
         EmployeeDTO employeeDTO = modelMapper.map(employee, EmployeeDTO.class);
 
@@ -63,6 +61,9 @@ public class EmployeeDTO {
         employeeDTO.addressDetail = employee.getAddress().getAddressDetail();
         employeeDTO.number = employee.getAddress().getNumber();
         employeeDTO.complement = employee.getAddress().getComplement();
+
+        employeeDTO.positionValue = employee.getPosition().getValue();
+
         return employeeDTO;
     }
 

@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Data
@@ -29,6 +28,7 @@ public class DiscountGroupDTO {
     private String description;
 
     public static DiscountGroupDTO create(DiscountGroup discountGroup) {
+
         ModelMapper modelMapper = new ModelMapper();
         DiscountGroupDTO discountGroupDTO = modelMapper.map(discountGroup, DiscountGroupDTO.class);
 

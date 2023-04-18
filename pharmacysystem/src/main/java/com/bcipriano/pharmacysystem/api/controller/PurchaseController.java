@@ -3,6 +3,7 @@ package com.bcipriano.pharmacysystem.api.controller;
 import com.bcipriano.pharmacysystem.api.dto.PurchaseDTO;
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
 import com.bcipriano.pharmacysystem.model.entity.Purchase;
+import com.bcipriano.pharmacysystem.model.entity.Supplier;
 import com.bcipriano.pharmacysystem.service.PurchaseService;
 import com.bcipriano.pharmacysystem.service.SupplierService;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -39,47 +39,36 @@ public class PurchaseController {
     public ResponseEntity get(@RequestParam("query") String query,
                               @RequestParam(defaultValue = "0") int page,
                               @RequestParam(defaultValue = "10") int size) {
-
-        int startItem = size * page;
-        List<Purchase> pageList;
-        List<Purchase> purchaseList = purchaseService.findPurchaseByQuery(query);
-
-        if(purchaseList.size() < startItem) {
-            pageList = Collections.emptyList();
-        } else {
-            int index = Math.min(startItem + size, purchaseList.size());
-            pageList = purchaseList.subList(startItem, index);
-        }
-
-        return ResponseEntity.ok(pageList.stream().map(PurchaseDTO::create).collect(Collectors.toList()));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Purchase> purchasePage = purchaseService.findPurchaseByQuery(query, pageable);
+        return ResponseEntity.ok(purchasePage.stream().map(PurchaseDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/supplier/{id}")
-    public ResponseEntity getBySupplierId(@PathVariable("id") long id,
-                                          @RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size){
+    public ResponseEntity getByPurchaseBySupplierId(@PathVariable("id") long id,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Purchase> purchasePage = purchaseService.getPurchaseBySupplierId(id, pageable);
+        return ResponseEntity.ok(purchasePage.stream().map(PurchaseDTO::create).collect(Collectors.toList()));
+    }
 
-        int startItem = size * page;
-        List<Purchase> pageList;
-        List<Purchase> purchaseList = purchaseService.getPurchaseBySupplierId(id);
-
-        if(purchaseList.size() < startItem) {
-            pageList = Collections.emptyList();
-        } else {
-            int index = Math.min(startItem + size, purchaseList.size());
-            pageList = purchaseList.subList(startItem, index);
+    @GetMapping("/noteNumber")
+    public ResponseEntity getPurchaseByNoteNumber(@RequestParam("noteNumber") String noteNumber) {
+        try {
+            Optional<Purchase> purchase = purchaseService.getPurchaseNoteNumber(noteNumber);
+            return ResponseEntity.ok(purchase.map(PurchaseDTO::create));
+        } catch (BusinessRuleException businessRuleException) {
+            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
-
-        return ResponseEntity.ok(pageList.stream().map(PurchaseDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity get(@PathVariable("id") Long id){
+    public ResponseEntity get(@PathVariable("id") Long id) {
         try {
-            Purchase purchaseResponse = purchaseService.getPurchaseById(id);
-            PurchaseDTO purchaseDTO = PurchaseDTO.create(purchaseResponse);
-            return ResponseEntity.ok(purchaseDTO);
-        } catch(BusinessRuleException businessRuleException) {
+            Optional<Purchase> purchaseResponse = purchaseService.getPurchaseById(id);
+            return ResponseEntity.ok(purchaseResponse.map(PurchaseDTO::create));
+        } catch (BusinessRuleException businessRuleException) {
             return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
     }
@@ -90,29 +79,29 @@ public class PurchaseController {
             Purchase purchase = converter(purchaseDTO);
             purchaseService.savePurchase(purchase);
             return new ResponseEntity("Compra armazenada com sucesso!", HttpStatus.CREATED);
-        } catch(BusinessRuleException businessRuleException){
+        } catch (BusinessRuleException businessRuleException) {
             return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
     }
 
     @PutMapping("{id}")
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody PurchaseDTO purchaseDTO){
+    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody PurchaseDTO purchaseDTO) {
         try {
             Purchase purchase = converter(purchaseDTO);
             purchase.setId(id);
             purchaseService.updatePurchase(purchase);
             return ResponseEntity.ok("Compra atualizada com sucesso!");
-        } catch(BusinessRuleException businessRuleException) {
+        } catch (BusinessRuleException businessRuleException) {
             return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id){
+    public ResponseEntity delete(@PathVariable("id") Long id) {
         try {
             purchaseService.deletePurchase(id);
             return ResponseEntity.ok("Compra excluída com sucesso!");
-        } catch (BusinessRuleException businessRuleException){
+        } catch (BusinessRuleException businessRuleException) {
             return ResponseEntity.badRequest().body(businessRuleException.getMessage());
         }
     }
@@ -123,10 +112,10 @@ public class PurchaseController {
 
         purchase.setPurchaseDate(LocalDate.parse(purchaseDTO.getPurchaseDate()));
 
-        if(purchaseDTO.getSupplierId() != null) {
-            purchase.setSupplier(supplierService.getSupplierById(purchaseDTO.getSupplierId()));
+        if (purchaseDTO.getSupplierId() != null) {
+            Optional<Supplier> supplier = supplierService.getSupplierById(purchaseDTO.getSupplierId());
+            purchase.setSupplier(supplier.get());
         }
-
         return purchase;
     }
 }

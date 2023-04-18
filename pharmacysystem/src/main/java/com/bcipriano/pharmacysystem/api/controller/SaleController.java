@@ -1,6 +1,5 @@
 package com.bcipriano.pharmacysystem.api.controller;
 
-
 import com.bcipriano.pharmacysystem.api.dto.SaleDTO;
 import com.bcipriano.pharmacysystem.api.dto.SaleItemDTO;
 import com.bcipriano.pharmacysystem.model.entity.Sale;
@@ -17,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/sales")
@@ -84,6 +81,18 @@ public class SaleController {
         }
     }
 
+    @PutMapping("{id}")
+    public ResponseEntity put(@RequestBody SaleDTO saleDTO, @PathVariable("id") Long id) {
+        try {
+            Sale sale = SaleController.converter(saleDTO, employeeService, clientService);
+            sale.setId(id);
+            saleService.updateSale(sale);
+            return ResponseEntity.ok("Venda atualizada com sucesso!");
+        } catch (RuntimeException runtimeException) {
+            return ResponseEntity.badRequest().body(runtimeException.getMessage());
+        }
+    }
+
     @DeleteMapping("{id}")
     @Transactional
     public ResponseEntity delete(@PathVariable("id") Long id){
@@ -104,11 +113,11 @@ public class SaleController {
         sale.setSaleDate(LocalDate.parse(saleDTO.getSaleDate()));
 
         if(saleDTO.getEmployeeId() != null){
-            sale.setEmployee(employeeService.getEmployeeById(saleDTO.getEmployeeId()));
+            sale.setEmployee(employeeService.getEmployeeById(saleDTO.getEmployeeId()).get());
         }
 
         if(saleDTO.getClientId() != null){
-            sale.setClient(clientService.getClientById(saleDTO.getClientId()));
+            sale.setClient(clientService.getClientById(saleDTO.getClientId()).get());
         }
 
         return sale;

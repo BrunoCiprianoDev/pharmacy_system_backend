@@ -95,7 +95,7 @@ public class ReturnController {
         returnObj.setRegisterDate(LocalDate.parse(returnDTO.getRegisterDate()));
 
         if(returnDTO.getSaleItemId() != null){
-            returnObj.setSaleItem(saleItemService.getSaleItemById(returnDTO.getSaleItemId()));
+            returnObj.setSaleItem(saleItemService.getSaleItemById(returnDTO.getSaleItemId()).get());
         }
         return returnObj;
     }

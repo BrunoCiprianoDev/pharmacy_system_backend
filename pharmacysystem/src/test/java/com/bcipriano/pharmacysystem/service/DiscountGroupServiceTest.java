@@ -1,10 +1,9 @@
 package com.bcipriano.pharmacysystem.service;
 
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
-import com.bcipriano.pharmacysystem.exception.InvalidIdException;
+import com.bcipriano.pharmacysystem.exception.NotFoundException;
 import com.bcipriano.pharmacysystem.model.entity.DiscountGroup;
 import com.bcipriano.pharmacysystem.model.repository.DiscountGroupRepository;
-import com.bcipriano.pharmacysystem.service.impl.DiscountGroupServiceImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,30 +21,29 @@ import java.util.Optional;
 public class DiscountGroupServiceTest {
 
     @SpyBean
-    DiscountGroupServiceImpl discountGroupService;
+    DiscountGroupService discountGroupService;
 
     @MockBean
     DiscountGroupRepository discountGroupRepository;
 
     @Test
-    public void testValidateDiscountGroup(){
+    public void validateDiscountGroupTest() {
 
         DiscountGroup discountGroup = DiscountGroup.builder().build();
 
         // Exception case name is NULL
         Throwable exception = Assertions.catchThrowable(()-> discountGroupService.validateDiscountGroup(discountGroup));
-        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O campo nome é obrigatório.");
+        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O campo nome do grupo de desconto é obrigatório.");
         discountGroup.setName("AnyString");
-
-        // Exception case startDate is NULL
-        exception = Assertions.catchThrowable(()-> discountGroupService.validateDiscountGroup(discountGroup));
-        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O campo data inicial é obrigatório.");
-        discountGroup.setStartDate(LocalDate.of(2023, 1, 1));
 
         // Exception case finalDate is NULL
         exception = Assertions.catchThrowable(()-> discountGroupService.validateDiscountGroup(discountGroup));
-        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O campo data final é obrigatório.");
+        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O campo data final do grupo de desconto é obrigatório.");
         discountGroup.setFinalDate(LocalDate.of(2023, 1, 1));
+
+        // Exception case percentual is NULL
+        exception = Assertions.catchThrowable(()-> discountGroupService.validateDiscountGroup(discountGroup));
+        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O campo percentual do grupo de desconto é obrigatório.");
 
         // Exception case parcentage <= 0
         discountGroup.setPercentage(-1d);
@@ -58,12 +56,17 @@ public class DiscountGroupServiceTest {
         Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O percentual deve estár entre 0 e 100%.");
         discountGroup.setPercentage(99d);
 
+        // Exception case minimumUnits is NULL
+        exception = Assertions.catchThrowable(()-> discountGroupService.validateDiscountGroup(discountGroup));
+        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O campo unidades mínimas do grupo de desconto é obrigatório.");
+
         // Exception case minimumUnits < 0
         discountGroup.setMinimumUnits(-1);
         exception = Assertions.catchThrowable(()-> discountGroupService.validateDiscountGroup(discountGroup));
         Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O valor para unidades mínimas deve ser maior que zero.");
 
     }
+
 
     @Test
     public void testExceptionDiscountGroup(){
@@ -72,7 +75,7 @@ public class DiscountGroupServiceTest {
 
         Throwable exception = Assertions.catchThrowable(()-> discountGroupService.saveDiscountGroup(DiscountGroup.builder().name(Mockito.anyString()).build()));
 
-        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("Já existe um grupo de desconto com esse nome.");
+        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class);
 
     }
 
@@ -83,7 +86,7 @@ public class DiscountGroupServiceTest {
 
         Throwable exception = Assertions.catchThrowable(()-> discountGroupService.updateDiscountGroup(DiscountGroup.builder().name(Mockito.anyString()).build()));
 
-        Assertions.assertThat(exception).isInstanceOf(BusinessRuleException.class).hasMessage("O desconto que está tentando modificar não existe.");
+        Assertions.assertThat(exception).isInstanceOf(NotFoundException.class);
 
     }
 
@@ -94,7 +97,7 @@ public class DiscountGroupServiceTest {
 
         Throwable exception = Assertions.catchThrowable(()-> discountGroupService.getDiscountGroupById(Mockito.anyLong()));
 
-        Assertions.assertThat(exception).isInstanceOf(InvalidIdException.class);
+        Assertions.assertThat(exception).isInstanceOf(NotFoundException.class);
 
     }
 
@@ -105,7 +108,7 @@ public class DiscountGroupServiceTest {
 
         Throwable exception = Assertions.catchThrowable(()-> discountGroupService.deleteDiscountGroup(Mockito.anyLong()));
 
-        Assertions.assertThat(exception).isInstanceOf(InvalidIdException.class);
+        Assertions.assertThat(exception).isInstanceOf(NotFoundException.class);
 
     }
 

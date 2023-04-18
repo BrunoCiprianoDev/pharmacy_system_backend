@@ -23,6 +23,7 @@ public class Client {
 
     private String name;
 
+    @Column(name = "cpf", unique = true)
     private String cpf;
 
     @Column(name = "born_date")
@@ -30,7 +31,6 @@ public class Client {
     private LocalDate bornDate;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "id_address")
     private Address address;
 
     private String phone;

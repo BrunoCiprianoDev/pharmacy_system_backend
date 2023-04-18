@@ -2,18 +2,15 @@ package com.bcipriano.pharmacysystem.model.entity.enums;
 
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
 
-public enum Stripe {
+public enum Position {
 
-    RED("Tarja vermelha"),
-    YELLOW("Tarja amarela"),
+    MANAGER("Gerente"),
 
-    BLACK("Tarja preta"),
-
-    NO_STRIPE("Sem tarja");
+    SELLER("Vendedor");
 
     private final String value;
 
-    Stripe(String value) {
+    Position(String value) {
         this.value = value;
     }
 
@@ -21,11 +18,11 @@ public enum Stripe {
         return value;
     }
 
-    public static Stripe fromString(String stripeString) {
+    public static Position fromString(String positionString) {
         try {
-            return Stripe.valueOf(stripeString);
+            return Position.valueOf(positionString);
         } catch (IllegalArgumentException e) {
-            throw new BusinessRuleException("Tarja inválida.");
+            throw new BusinessRuleException("Função inválida.");
         }
     }
 

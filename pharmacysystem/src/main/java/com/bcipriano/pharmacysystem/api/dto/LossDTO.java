@@ -8,8 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 
-import java.time.LocalDate;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,11 +21,11 @@ public class LossDTO {
 
     private Long lotId;
 
-    private Lot lot;
+    private String lotNumber;
 
     private Long employeeId;
 
-    private Employee employee;
+    private String employeeName;
 
     private String description;
 
@@ -36,6 +34,8 @@ public class LossDTO {
         LossDTO dto = modelMapper.map(loss, LossDTO.class);
         dto.lotId = loss.getLot().getId();
         dto.employeeId = loss.getEmployee().getId();
+        dto.employeeName = loss.getEmployee().getName();
+        dto.lotNumber = loss.getLot().getNumber();
         return dto;
     }
 }

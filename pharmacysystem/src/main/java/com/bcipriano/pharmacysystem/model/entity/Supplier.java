@@ -19,6 +19,7 @@ public class Supplier {
 
     private String name;
 
+    @Column(name = "cnpj", unique = true)
     private String cnpj;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
