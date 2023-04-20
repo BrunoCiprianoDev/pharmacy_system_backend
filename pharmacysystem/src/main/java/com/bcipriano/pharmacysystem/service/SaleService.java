@@ -94,6 +94,13 @@ public class SaleService{
         if (!saleRepository.existsById(id)) {
             throw new BusinessRuleException("Item venda com id inválido.");
         }
+
+        List<SaleItem> saleItems = saleItemService.getSaleItemBySaleId(id);
+
+        for(SaleItem saleItem : saleItems) {
+            saleItemService.deleteSaleItem(saleItem);
+        }
+
         saleRepository.deleteById(id);
     }
 }

@@ -55,21 +55,8 @@ public class SaleItemService {
             throw new BusinessRuleException("Já existe item venda cadastrada com esse id");
         }
         SaleItemService.validateSaleItem(saleItem, lotRepository);
+        lotRepository.subtractUnitsFromLot(saleItem.getLot().getId(), saleItem.getUnits());
         return saleItemRepository.save(saleItem);
-    }
-
-    @Transactional
-    public List<SaleItem> saveSaleItemList(List<SaleItem> saleItemList) {
-        for (SaleItem saleItem : saleItemList) {
-            if (!saleRepository.existsById(saleItem.getSale().getId())) {
-                throw new BusinessRuleException("Esse item não pertence a um venda cadastrada.");
-            }
-            if (saleItem.getId() != null && saleItemRepository.existsById(saleItem.getId())) {
-                throw new BusinessRuleException("Já existe item venda cadastrada com esse id");
-            }
-            SaleItemService.validateSaleItem(saleItem, lotRepository);
-        }
-        return saleItemRepository.saveAll(saleItemList);
     }
 
     @Transactional
@@ -107,17 +94,17 @@ public class SaleItemService {
         return saleItemRepository.findSaleItemByLotId(lotId);
     }
 
-    public void deleteSaleItem(Long id) {
-        if (!saleItemRepository.existsById(id)) {
+    public void deleteSaleItem(SaleItem saleItem) {
+        if (!saleItemRepository.existsById(saleItem.getId())) {
             throw new BusinessRuleException("Item venda com id inválido.");
         }
-        saleItemRepository.deleteById(id);
+        if(!lotRepository.existsById(saleItem.getLot().getId())) {
+            throw new BusinessRuleException("Lot com Id inválido.");
+        }
+
+        lotRepository.addUnitsFromLot(saleItem.getLot().getId(), saleItem.getUnits());
+
+        saleItemRepository.deleteById(saleItem.getId());
     }
 
-    public void deleteBySaleId(Long saleId) {
-        if (!saleRepository.existsById(saleId)) {
-            throw new BusinessRuleException("Venda com id inválido.");
-        }
-        saleItemRepository.deleteBySaleId(saleId);
-    }
 }

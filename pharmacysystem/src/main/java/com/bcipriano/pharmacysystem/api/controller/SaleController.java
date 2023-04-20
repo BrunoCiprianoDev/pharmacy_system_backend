@@ -6,6 +6,7 @@ import com.bcipriano.pharmacysystem.model.entity.Sale;
 import com.bcipriano.pharmacysystem.model.entity.SaleItem;
 import com.bcipriano.pharmacysystem.service.*;
 import lombok.RequiredArgsConstructor;
+import org.h2.store.Data;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 @RestController
 @RequestMapping("/api/v1/sales")
@@ -97,7 +101,7 @@ public class SaleController {
     @Transactional
     public ResponseEntity delete(@PathVariable("id") Long id){
         try {
-            saleItemService.deleteBySaleId(id);
+
             saleService.deleteSale(id);
             return ResponseEntity.ok("Venda excluída com sucesso!");
         } catch (RuntimeException runtimeException) {
