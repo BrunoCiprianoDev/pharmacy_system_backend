@@ -10,12 +10,7 @@ import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-
 
 @Configuration
 @EnableSwagger2
@@ -38,7 +33,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder()
                 .title("Pharmacy system")
-                .description("Pharmacy sale systema")
+                .description("Pharmacy management system")
                 .version("1.0")
                 .contact(contact())
                 .build();
@@ -49,6 +44,5 @@ public class SwaggerConfig {
                 , "http://github.com/BrunoCiprianoDev",
                 "cipriano990@gmail.com");
     }
-
 
 }

@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Collectors;
-//CrossOrigin(origins = "http://localhost:3000")
+
+//http://localhost:8080/swagger-ui.html
+
 @RestController
 @RequestMapping("/api/v1/clients")
 @RequiredArgsConstructor
