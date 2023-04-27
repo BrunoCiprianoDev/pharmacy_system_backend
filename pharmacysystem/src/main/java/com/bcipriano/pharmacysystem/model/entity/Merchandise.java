@@ -3,7 +3,7 @@ package com.bcipriano.pharmacysystem.model.entity;
 import com.bcipriano.pharmacysystem.model.entity.enums.Department;
 import com.bcipriano.pharmacysystem.model.entity.enums.StorageTemperature;
 import com.bcipriano.pharmacysystem.model.entity.enums.Stripe;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
