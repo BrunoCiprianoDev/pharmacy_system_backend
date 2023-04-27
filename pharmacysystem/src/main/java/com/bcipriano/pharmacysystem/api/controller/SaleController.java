@@ -44,7 +44,7 @@ public class SaleController {
         Page<Sale> salePage = saleService.getSale(pageable);
 
         List<SaleDTO> saleDTOList = new ArrayList<>();
-        for(Sale sale : salePage) {
+        for (Sale sale : salePage) {
             List<SaleItem> saleItems = saleItemService.getSaleItemBySaleId(sale.getId());
             saleDTOList.add(SaleDTO.create(sale, saleItems));
         }
@@ -60,19 +60,19 @@ public class SaleController {
             List<SaleItem> saleItems = saleItemService.getSaleItemBySaleId(id);
             SaleDTO saleDTO = SaleDTO.create(sale, saleItems);
             return ResponseEntity.ok(saleDTO);
-        } catch(RuntimeException exception) {
+        } catch (RuntimeException exception) {
             return ResponseEntity.badRequest().body(exception.getMessage());
         }
 
     }
 
     @PostMapping
-    public ResponseEntity post(@RequestBody SaleDTO saleDTO){
+    public ResponseEntity post(@RequestBody SaleDTO saleDTO) {
         try {
             Sale sale = SaleController.converter(saleDTO, employeeService, clientService);
 
             List<SaleItem> saleItemList = new ArrayList<>();
-            for(SaleItemDTO saleItemDTO : saleDTO.getSaleItemsDTO()){
+            for (SaleItemDTO saleItemDTO : saleDTO.getSaleItemsDTO()) {
                 SaleItem saleItem = SaleItemController.converter(saleItemDTO, saleService, lotService);
                 saleItemList.add(saleItem);
             }
@@ -99,7 +99,7 @@ public class SaleController {
 
     @DeleteMapping("{id}")
     @Transactional
-    public ResponseEntity delete(@PathVariable("id") Long id){
+    public ResponseEntity delete(@PathVariable("id") Long id) {
         try {
 
             saleService.deleteSale(id);
@@ -116,11 +116,11 @@ public class SaleController {
 
         sale.setSaleDate(LocalDate.parse(saleDTO.getSaleDate()));
 
-        if(saleDTO.getEmployeeId() != null){
+        if (saleDTO.getEmployeeId() != null) {
             sale.setEmployee(employeeService.getEmployeeById(saleDTO.getEmployeeId()).get());
         }
 
-        if(saleDTO.getClientId() != null){
+        if (saleDTO.getClientId() != null) {
             sale.setClient(clientService.getClientById(saleDTO.getClientId()).get());
         }
 

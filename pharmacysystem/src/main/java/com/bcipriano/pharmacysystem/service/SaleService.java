@@ -100,7 +100,6 @@ public class SaleService{
         for(SaleItem saleItem : saleItems) {
             saleItemService.deleteSaleItem(saleItem);
         }
-
         saleRepository.deleteById(id);
     }
 }
