@@ -1,7 +1,6 @@
 package com.bcipriano.pharmacysystem.api.dto;
 
 import com.bcipriano.pharmacysystem.model.entity.Employee;
-import com.bcipriano.pharmacysystem.model.entity.enums.Position;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

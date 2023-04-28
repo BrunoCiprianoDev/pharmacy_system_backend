@@ -66,6 +66,7 @@ public class SaleService{
         }
     }
 
+    @Transactional
     public void updateSale(Sale sale) {
         if (!saleRepository.existsById(sale.getId())) {
             throw new BusinessRuleException("A venda que está tentando modificar não está cadastrada.");
@@ -90,6 +91,7 @@ public class SaleService{
         return saleRepository.findSaleByQuery(query);
     }
 
+    @Transactional
     public void deleteSale(Long id) {
         if (!saleRepository.existsById(id)) {
             throw new BusinessRuleException("Item venda com id inválido.");

@@ -51,9 +51,6 @@ public class EmployeeService {
         if (employee.getBornDate().isBefore(minBirthDate) || employee.getBornDate().isAfter(maxBirthDate)) {
             throw new BusinessRuleException("Data de nascimento do funcionário inválida.");
         }
-        if (employee.getAddress() == null) {
-            throw new BusinessRuleException("Endereço do funcionário inválido.");
-        }
 
         AddressService.validateAddress(employee.getAddress());
 
@@ -68,14 +65,8 @@ public class EmployeeService {
                 throw new BusinessRuleException("Telefone 2 do funcionário é inválido.");
             }
         }
-        if (employee.getEmail() == null) {
-            throw new BusinessRuleException("O campo e-mail do funcionário é obrigatório.");
-        }
         if (!employee.getEmail().matches(emailPattern)) {
             throw new BusinessRuleException("E-mail do funcionário é inválido.");
-        }
-        if (employee.getPosition() == null) {
-            throw new BusinessRuleException("Selecione uma função para o funcionário");
         }
 
     }

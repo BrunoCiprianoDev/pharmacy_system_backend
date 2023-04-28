@@ -3,7 +3,7 @@ package com.bcipriano.pharmacysystem.api.controller;
 
 
 import com.bcipriano.pharmacysystem.api.dto.EmployeeDTO;
-import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
+//import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
 import com.bcipriano.pharmacysystem.exception.NotFoundException;
 import com.bcipriano.pharmacysystem.model.entity.Address;
 import com.bcipriano.pharmacysystem.model.entity.Employee;
@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -69,7 +70,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity post(@RequestBody EmployeeDTO employeeDTO) {
+    public ResponseEntity post(@RequestBody @Valid EmployeeDTO employeeDTO) {
         try {
             Employee employee = converter(employeeDTO);
             employeeService.saveEmployee(employee);
