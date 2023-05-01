@@ -1,6 +1,10 @@
 package com.bcipriano.pharmacysystem.config;
 
+import com.bcipriano.pharmacysystem.model.entity.*;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.swagger.web.OperationsSorter;
+import springfox.documentation.swagger.web.UiConfiguration;
+import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -25,9 +29,29 @@ public class SwaggerConfig {
                         .basePackage("com.bcipriano.pharmacysystem.api.controller"))
                 .paths(PathSelectors.any())
                 .build()
-                .securityContexts(Arrays.asList())
-                .securitySchemes(Arrays.asList())
-                .apiInfo(apiInfo());
+                .apiInfo(apiInfo())
+                .ignoredParameterTypes(
+                        Address.class,
+                        Client.class,
+                        DiscountGroup.class,
+                        Employee.class,
+                        Loss.class,
+                        Lot.class,
+                        Merchandise.class,
+                        Purchase.class,
+                        Return.class,
+                        Sale.class,
+                        SaleItem.class,
+                        Supplier.class
+                );
+    }
+
+    @Bean
+    public UiConfiguration uiConfig() {
+        return UiConfigurationBuilder
+                .builder()
+                .operationsSorter(OperationsSorter.METHOD)
+            .build();
     }
 
     private ApiInfo apiInfo(){

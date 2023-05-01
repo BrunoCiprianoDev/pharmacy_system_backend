@@ -1,4 +1,4 @@
-package com.bcipriano.pharmacysystem.api.dto;
+package com.bcipriano.pharmacysystem.api.dto.saleItemDTO;
 
 import com.bcipriano.pharmacysystem.model.entity.SaleItem;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import org.modelmapper.ModelMapper;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SaleItemDTO {
+public class SaleItemReadDTO {
 
     private Long id;
 
@@ -23,9 +23,9 @@ public class SaleItemDTO {
 
     private String lotNumber;
 
-    public static SaleItemDTO create(SaleItem saleItem){
+    public static SaleItemReadDTO create(SaleItem saleItem){
         ModelMapper modelMapper = new ModelMapper();
-        SaleItemDTO dto = modelMapper.map(saleItem, SaleItemDTO.class);
+        SaleItemReadDTO dto = modelMapper.map(saleItem, SaleItemReadDTO.class);
         dto.saleId = saleItem.getSale().getId();
         dto.lotId = saleItem.getLot().getId();
         dto.lotNumber = saleItem.getLot().getNumber();

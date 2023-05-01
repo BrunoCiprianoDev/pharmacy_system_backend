@@ -1,5 +1,6 @@
 package com.bcipriano.pharmacysystem.model.entity;
 
+import com.bcipriano.pharmacysystem.model.entity.enums.Classification;
 import com.bcipriano.pharmacysystem.model.entity.enums.Department;
 import com.bcipriano.pharmacysystem.model.entity.enums.StorageTemperature;
 import com.bcipriano.pharmacysystem.model.entity.enums.Stripe;
@@ -29,7 +30,11 @@ public class Merchandise {
     @Enumerated(value = EnumType.STRING)
     private Department department;
 
-    private String classification;
+    @Enumerated(value = EnumType.STRING)
+    private Classification classification;
+
+    @Column(name = "pharmacological_group")
+    private String pharmacologicalGroup;
 
     private String brand;
 
@@ -39,7 +44,7 @@ public class Merchandise {
     private Stripe stripe;
 
     @Column(name = "storage_temperature")
-    private StorageTemperature storageTemperature;
+    private Double storageTemperature;
 
     private String rms;
 

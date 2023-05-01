@@ -26,9 +26,9 @@ public class Client {
     @Column(name = "cpf", unique = true)
     private String cpf;
 
-    @Column(name = "born_date")
+    @Column(name = "birth_date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
-    private LocalDate bornDate;
+    private LocalDate birthDate;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Address address;

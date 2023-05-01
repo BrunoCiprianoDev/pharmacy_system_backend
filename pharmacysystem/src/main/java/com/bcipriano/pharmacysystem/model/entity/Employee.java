@@ -2,6 +2,7 @@ package com.bcipriano.pharmacysystem.model.entity;
 
 import com.bcipriano.pharmacysystem.model.entity.enums.Position;
 import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,9 +27,9 @@ public class Employee {
     @Column(name = "cpf", unique = true)
     private String cpf;
 
-    @Column(name = "born_date")
+    @Column(name = "birth_Date")
     @Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
-    private LocalDate bornDate;
+    private LocalDate birthDate;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_address")

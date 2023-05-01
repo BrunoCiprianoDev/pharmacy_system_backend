@@ -4,6 +4,7 @@ import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
 import com.bcipriano.pharmacysystem.exception.NotFoundException;
 import com.bcipriano.pharmacysystem.model.entity.DiscountGroup;
 import com.bcipriano.pharmacysystem.model.repository.DiscountGroupRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,53 +25,6 @@ public class DiscountGroupService {
         this.discountGroupRepository = discountGroupRepository;
     }
 
-    public static void validateDiscountGroup(DiscountGroup discountGroup) {
-        if (discountGroup.getName() == null) {
-            throw new BusinessRuleException("O campo nome do grupo de desconto é obrigatório.");
-        }
-        if (discountGroup.getFinalDate() == null) {
-            throw new BusinessRuleException("O campo data final do grupo de desconto é obrigatório.");
-        }
-        if (discountGroup.getPercentage() == null) {
-            throw new BusinessRuleException("O campo percentual do grupo de desconto é obrigatório.");
-        }
-        if (discountGroup.getPercentage() <= 0 || discountGroup.getPercentage() > 100) {
-            throw new BusinessRuleException("O percentual deve estár entre 0 e 100%.");
-        }
-        if (discountGroup.getMinimumUnits() == null) {
-            throw new BusinessRuleException("O campo unidades mínimas do grupo de desconto é obrigatório.");
-        }
-        if (discountGroup.getMinimumUnits() < 0) {
-            throw new BusinessRuleException("O valor para unidades mínimas deve ser maior que zero.");
-        }
-    }
-
-    @Transactional
-    public DiscountGroup saveDiscountGroup(DiscountGroup discountGroup) {
-        if (discountGroupRepository.existsByName(discountGroup.getName())) {
-            throw new BusinessRuleException("Já existe um grupo de desconto cadastrado com esse nome.");
-        }
-        validateDiscountGroup(discountGroup);
-        return discountGroupRepository.save(discountGroup);
-    }
-
-    @Transactional
-    public DiscountGroup updateDiscountGroup(DiscountGroup discountGroup) {
-        if (!discountGroupRepository.existsById(discountGroup.getId())) {
-            throw new NotFoundException("O id do grupo desconto que está tentado modificar não é válido.");
-        }
-        validateDiscountGroup(discountGroup);
-        return discountGroupRepository.save(discountGroup);
-    }
-
-    @Transactional
-    public void deleteDiscountGroup(Long id) {
-        if (!discountGroupRepository.existsById(id)) {
-            throw new NotFoundException("O id do grupo desconto que está tentado excluír não é válido.");
-        }
-        discountGroupRepository.deleteById(id);
-    }
-
     public Page<DiscountGroup> getDiscountGroup(Pageable pageable) {
         return discountGroupRepository.findAll(pageable);
     }
@@ -84,7 +38,7 @@ public class DiscountGroupService {
             LocalDate startDateConverted = LocalDate.parse(startDate);
             return discountGroupRepository.findByStartDate(startDateConverted, pageable);
         } catch (DateTimeParseException dateTimeParseException) {
-            throw new IllegalArgumentException("Data de início inválida: " + startDate, dateTimeParseException);
+            throw new BusinessRuleException("Data de início inválida: " + startDate);
         }
     }
 
@@ -93,7 +47,7 @@ public class DiscountGroupService {
             LocalDate startDateConverted = LocalDate.parse(finalDate);
             return discountGroupRepository.findByFinalDate(startDateConverted, pageable);
         } catch (DateTimeParseException dateTimeParseException) {
-            throw new IllegalArgumentException("Data de início inválida: " + finalDate, dateTimeParseException);
+            throw new BusinessRuleException("Data final inválida: " + finalDate);
         }
     }
 
@@ -103,6 +57,30 @@ public class DiscountGroupService {
             throw new NotFoundException("O id do grupo desconto que está tentado buscar não é válido.");
         }
         return discountGroup;
+    }
+
+    @Transactional
+    public DiscountGroup saveDiscountGroup(DiscountGroup discountGroup) {
+        if (discountGroupRepository.existsByName(discountGroup.getName())) {
+            throw new BusinessRuleException("Já existe um grupo de desconto cadastrado com esse nome.");
+        }
+        return discountGroupRepository.save(discountGroup);
+    }
+
+    @Transactional
+    public DiscountGroup updateDiscountGroup(DiscountGroup discountGroup) {
+        if (!discountGroupRepository.existsById(discountGroup.getId())) {
+            throw new NotFoundException("O id do grupo desconto que está tentado modificar não é válido.");
+        }
+        return discountGroupRepository.save(discountGroup);
+    }
+
+    @Transactional
+    public void deleteDiscountGroup(Long id) {
+        if (!discountGroupRepository.existsById(id)) {
+            throw new NotFoundException("O id do grupo desconto que está tentado excluír não é válido.");
+        }
+        discountGroupRepository.deleteById(id);
     }
 
 

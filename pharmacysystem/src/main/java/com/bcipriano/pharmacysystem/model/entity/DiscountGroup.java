@@ -37,6 +37,7 @@ public class DiscountGroup {
     @Column(name = "minimum_units")
     private Integer minimumUnits;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
 }

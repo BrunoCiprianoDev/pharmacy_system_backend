@@ -28,24 +28,8 @@ public class LossService{
         this.employeeRepository = employeeRepository;
     }
 
-    public static void validateLoss(Loss loss, LotRepository lotRepository, EmployeeRepository employeeRepository) {
-        if (loss.getRegisterDate() == null) {
-            throw new BusinessRuleException("Data de registro inválida.");
-        }
-        if (loss.getUnits() < 0) {
-            throw new BusinessRuleException("Número de unidades inválido.");
-        }
-        if (loss.getLot() == null || !lotRepository.existsById(loss.getLot().getId())) {
-            throw new BusinessRuleException("Lote inválido.");
-        }
-        if (loss.getEmployee() == null || !employeeRepository.existsById(loss.getEmployee().getId())) {
-            throw new BusinessRuleException("Funcionário inválido.");
-        }
-    }
-
     @Transactional
     public Loss saveLoss(Loss loss) {
-        validateLoss(loss, lotRepository, employeeRepository);
 
         Integer currentUnits = loss.getLot().getUnits() - loss.getUnits();
         if(currentUnits < 0) {
@@ -60,10 +44,8 @@ public class LossService{
     public Loss updateLoss(Loss loss) {
 
         if (!lossRepository.existsById(loss.getId())) {
-            throw new BusinessRuleException("Registro de perda com id inválido.");
+            throw new NotFoundException("Registro de perda com id inválido.");
         }
-
-        validateLoss(loss, lotRepository, employeeRepository);
 
         Loss currentLoss = lossRepository.findLossById(loss.getId()).get();
 
@@ -84,7 +66,7 @@ public class LossService{
     public Loss getLossById(Long id) {
         Optional<Loss> loss = lossRepository.findLossById(id);
         if (loss.isEmpty()) {
-            throw new BusinessRuleException("Registro de perda com id inválido.");
+            throw new NotFoundException("Registro de perda com id inválido.");
         }
         return loss.get();
     }

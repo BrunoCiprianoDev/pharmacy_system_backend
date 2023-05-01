@@ -1,30 +1,37 @@
 package com.bcipriano.pharmacysystem.api.controller;
 
 import com.bcipriano.pharmacysystem.api.dto.MerchandiseDTO;
-import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
-import com.bcipriano.pharmacysystem.exception.NotFoundException;
 import com.bcipriano.pharmacysystem.model.entity.DiscountGroup;
 import com.bcipriano.pharmacysystem.model.entity.Merchandise;
-import com.bcipriano.pharmacysystem.model.entity.enums.Department;
-import com.bcipriano.pharmacysystem.model.entity.enums.StorageTemperature;
-import com.bcipriano.pharmacysystem.model.entity.enums.Stripe;
 import com.bcipriano.pharmacysystem.service.DiscountGroupService;
-import com.bcipriano.pharmacysystem.service.LotService;
 import com.bcipriano.pharmacysystem.service.MerchandiseService;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/merchandises")
+@RequestMapping(value = "/api/v1/merchandises", produces = {"application/json"})
 @RequiredArgsConstructor
 public class MerchandiseController {
 
@@ -33,90 +40,186 @@ public class MerchandiseController {
     private final DiscountGroupService discountGroupService;
 
     @GetMapping
-    public ResponseEntity get(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    @ApiOperation("Returns all merchandises registered in the system.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Returns a paginated list of merchandises"),
+            @ApiResponse(code = 400, message = "A validation error occurred while processing the request"),
+            @ApiResponse(code = 500, message = "An internal server error occurred")
+    })
+    public ResponseEntity<List<MerchandiseDTO>> get(
+            @ApiParam(value = "The page number to be returned (starting at 0)", defaultValue = "0")
+            @RequestParam(defaultValue = "0") int page,
+            @ApiParam(value = "The maximum number of merchandises to be returned in a page", defaultValue = "10")
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @ApiParam(value = "The sorting direction (ASC or DESC)", defaultValue = "ASC")
+            @RequestParam(defaultValue = "ASC") String sortDirection) {
+        Sort.Direction direction = sortDirection.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, direction, sortBy);
         Page<Merchandise> merchandisePage = merchandiseService.getMerchandise(pageable);
         return ResponseEntity.ok(merchandisePage.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/search")
-    public ResponseEntity get(@RequestParam("query") String query,
-                              @RequestParam(defaultValue = "0") int page,
-                              @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    @ApiOperation(value = "Performs a paginated search of merchandises based on the provided query")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Returns a paginated list of merchandises that match the provided query"),
+            @ApiResponse(code = 400, message = "A validation error occurred while processing the request"),
+            @ApiResponse(code = 500, message = "An internal server error occurred")
+    })
+    public ResponseEntity<List<MerchandiseDTO>> get(
+            @ApiParam(value = "The query to search for merchandises")
+            @RequestParam("query") String query,
+            @ApiParam(value = "The page number to be returned (starting at 0)", defaultValue = "0")
+            @RequestParam(defaultValue = "0") int page,
+            @ApiParam(value = "The maximum number of merchandises to be returned in a page", defaultValue = "10")
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @ApiParam(value = "The sorting direction (ASC or DESC)", defaultValue = "ASC")
+            @RequestParam(defaultValue = "ASC") String sortDirection) {
+        Sort.Direction direction = sortDirection.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, direction, sortBy);
         Page<Merchandise> merchandisePage = merchandiseService.findMerchandiseByQuery(query, pageable);
         return ResponseEntity.ok(merchandisePage.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/discountGroupId/{id}")
-    public ResponseEntity getByDiscountGroupId(@PathVariable("id") Long id,
-                                               @RequestParam(defaultValue = "0") int page,
-                                               @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        try {
-            Page<Merchandise> merchandisePage = merchandiseService.findMerchandiseByDiscountGroupId(id, pageable);
-            return ResponseEntity.ok(merchandisePage.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
-        } catch (NotFoundException notFoundException) {
-            return ResponseEntity.badRequest().body(notFoundException.getMessage());
-        }
+    @ApiOperation(value = "Performs a paginated search of merchandises based on the provided discount group ID")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Returns a paginated list of merchandises that match the provided discount group ID"),
+            @ApiResponse(code = 400, message = "A validation error occurred while processing the request"),
+            @ApiResponse(code = 500, message = "An internal server error occurred")
+    })
+    public ResponseEntity<List<MerchandiseDTO>> getByDiscountGroupId(
+            @ApiParam(value = "Discount group ID")
+            @PathVariable("id") Long id,
+            @ApiParam(value = "The page number to be returned (starting at 0)", defaultValue = "0")
+            @RequestParam(defaultValue = "0") int page,
+            @ApiParam(value = "The maximum number of merchandises to be returned in a page", defaultValue = "10")
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @ApiParam(value = "The sorting direction (ASC or DESC)", defaultValue = "ASC")
+            @RequestParam(defaultValue = "ASC") String sortDirection) {
+        Sort.Direction direction = sortDirection.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, direction, sortBy);
+        Page<Merchandise> merchandisePage = merchandiseService.findMerchandiseByDiscountGroupId(id, pageable);
+        return ResponseEntity.ok(merchandisePage.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/discountGroupName")
-    public ResponseEntity getByDiscountGroupName(@RequestParam("name") String name,
-                                                 @RequestParam(defaultValue = "0") int page,
-                                                 @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    @ApiOperation(value = "Performs a paginated search of merchandises based on the provided discount group name")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Returns a paginated list of merchandises that match the provided discount group name"),
+            @ApiResponse(code = 400, message = "A validation error occurred while processing the request"),
+            @ApiResponse(code = 500, message = "An internal server error occurred")
+    })
+    public ResponseEntity<List<MerchandiseDTO>> getByDiscountGroupName(
+            @ApiParam(value = "Discount group name")
+            @RequestParam("name") String name,
+            @ApiParam(value = "The page number to be returned (starting at 0)", defaultValue = "0")
+            @RequestParam(defaultValue = "0") int page,
+            @ApiParam(value = "The maximum number of merchandises to be returned in a page", defaultValue = "10")
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @ApiParam(value = "The sorting direction (ASC or DESC)", defaultValue = "ASC")
+            @RequestParam(defaultValue = "ASC") String sortDirection) {
+        Sort.Direction direction = sortDirection.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, direction, sortBy);
         Page<Merchandise> merchandisePage = merchandiseService.findMerchandiseByDiscountGroupName(name, pageable);
         return ResponseEntity.ok(merchandisePage.stream().map(MerchandiseDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/merchandiseCode")
-    public ResponseEntity getByMerchandiseCode(@RequestParam("code") String code){
-        Optional<Merchandise> merchandise = merchandiseService.findMerchandiseByCode(code);
-        return ResponseEntity.ok(merchandise.map(MerchandiseDTO::create));
+    @ApiOperation(value = "Return merchandise by code")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Returns a paginated list of merchandise by merchandise code"),
+            @ApiResponse(code = 400, message = "A validation error occurred while processing the request"),
+            @ApiResponse(code = 404, message = "No merchandise found with the provided code."),
+            @ApiResponse(code = 500, message = "An internal server error occurred")
+    })
+    public ResponseEntity<MerchandiseDTO> getByMerchandiseCode(
+            @ApiParam(value = "Merchandise code")
+            @RequestParam("code") String code
+    ) {
+        Optional<Merchandise> merchandiseResponse = merchandiseService.findMerchandiseByCode(code);
+        return ResponseEntity.ok(MerchandiseDTO.create(merchandiseResponse.get()));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity get(@PathVariable("id") Long id) {
-        try {
-            Optional<Merchandise> merchandise = merchandiseService.getMerchandiseById(id);
-            return ResponseEntity.ok(merchandise.map(MerchandiseDTO::create));
-        } catch (BusinessRuleException businessRuleException) {
-            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
-        }
+    @ApiOperation(value = "Return merchandise by ID")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Returns a paginated list of merchandise by ID"),
+            @ApiResponse(code = 400, message = "A validation error occurred while processing the request"),
+            @ApiResponse(code = 404, message = "No employee found with the provided ID."),
+            @ApiResponse(code = 500, message = "An internal server error occurred")
+    })
+    public ResponseEntity<MerchandiseDTO> get(
+            @ApiParam(value = "Merchandise ID")
+            @PathVariable("id") Long id) {
+        Optional<Merchandise> merchandiseResponse = merchandiseService.getMerchandiseById(id);
+        return ResponseEntity.ok(MerchandiseDTO.create(merchandiseResponse.get()));
     }
 
     @PostMapping
-    public ResponseEntity post(@RequestBody MerchandiseDTO merchandiseDTO) {
-        try {
-            Merchandise merchandise = converter(merchandiseDTO);
-            merchandiseService.saveMerchandise(merchandise);
-            return new ResponseEntity("Mercadoria armazenada com sucesso!", HttpStatus.CREATED);
-        } catch (BusinessRuleException businessRuleException) {
-            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
-        }
+    @ApiOperation("Creates a new merchandise")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Merchandise created successfully."),
+            @ApiResponse(code = 400, message = "A validation error occurred while processing the request"),
+            @ApiResponse(code = 500, message = "An internal server error occurred")
+    })
+    public ResponseEntity<MerchandiseDTO> post(
+            @ApiParam(value = "The details of the merchandise to create", required = true)
+            @RequestBody @Valid MerchandiseDTO merchandiseDTO) {
+        Merchandise merchandise = converter(merchandiseDTO);
+        Merchandise merchandiseResponse = merchandiseService.saveMerchandise(merchandise);
+        return new ResponseEntity(MerchandiseDTO.create(merchandiseResponse), HttpStatus.CREATED);
+
     }
 
     @PutMapping("{id}")
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody MerchandiseDTO merchandiseDTO) {
-        try {
-            Merchandise merchandise = converter(merchandiseDTO);
-            merchandise.setId(id);
-            merchandiseService.updateMerchandise(merchandise);
-            return ResponseEntity.ok("Mercadoria atualizada com sucesso!");
-        } catch (BusinessRuleException businessRuleException) {
-            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
-        }
+    @ApiOperation("Update an merchandise")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Merchandise updated successfully."),
+            @ApiResponse(code = 400, message = "A validation error occurred while processing the request"),
+            @ApiResponse(code = 500, message = "An internal server error occurred")
+    })
+    public ResponseEntity<MerchandiseDTO> update(
+            @ApiParam(value = "Merchandise ID", required = true)
+            @PathVariable("id") Long id,
+            @ApiParam(value = "The details of the merchandise to update", required = true)
+            @RequestBody @Valid MerchandiseDTO merchandiseDTO
+    ) {
+        Merchandise merchandise = converter(merchandiseDTO);
+        merchandise.setId(id);
+        Merchandise merchandiseResponse = merchandiseService.updateMerchandise(merchandise);
+        return new ResponseEntity(MerchandiseDTO.create(merchandiseResponse), HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id) {
-        try {
+    @ApiOperation("Delete an merchandise by ID")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Merchandise deleted successfully."),
+            @ApiResponse(code = 400, message = "A validation error occurred while processing the request"),
+            @ApiResponse(code = 500, message = "An internal server error occurred")
+    })
+    public ResponseEntity<?> delete(
+            @ApiParam(value = "Merchandise ID", required = true)
+            @PathVariable("id") Long id) {
             merchandiseService.deleteMerchandise(id);
             return ResponseEntity.ok("Mercadoria excluída com sucesso!");
-        } catch (BusinessRuleException businessRuleException) {
-            return ResponseEntity.badRequest().body(businessRuleException.getMessage());
-        }
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationException(MethodArgumentNotValidException methodArgumentNotValidException) {
+        Map<String, String> errors = new HashMap<>();
+        methodArgumentNotValidException.getBindingResult().getAllErrors().forEach((error) -> {
+                    String fieldName = ((FieldError) error).getField();
+                    String errorMessage = error.getDefaultMessage();
+                    errors.put(fieldName, errorMessage);
+                }
+        );
+        return errors;
     }
 
     public Merchandise converter(MerchandiseDTO merchandiseDTO) {
@@ -128,10 +231,6 @@ public class MerchandiseController {
             Optional<DiscountGroup> discountGroupServiceOptional = discountGroupService.getDiscountGroupById(merchandiseDTO.getDiscountGroupId());
             merchandise.setDiscountGroup(discountGroupServiceOptional.get());
         }
-
-        merchandise.setDepartment(Department.fromString(merchandiseDTO.getDepartment()));
-        merchandise.setStripe(Stripe.fromString(merchandiseDTO.getStripe()));
-        merchandise.setStorageTemperature(StorageTemperature.fromString(merchandiseDTO.getStorageTemperature()));
 
         return merchandise;
     }

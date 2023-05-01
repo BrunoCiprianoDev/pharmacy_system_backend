@@ -1,7 +1,5 @@
 package com.bcipriano.pharmacysystem.service;
 
-import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
-
 import com.bcipriano.pharmacysystem.exception.NotFoundException;
 import com.bcipriano.pharmacysystem.model.entity.Lot;
 import com.bcipriano.pharmacysystem.model.repository.LotRepository;
@@ -28,46 +26,6 @@ public class LotService {
         this.lotRepository = lotRepository;
         this.purchaseRepository = purchaseRepository;
         this.merchandiseRepository = merchandiseRepository;
-    }
-
-    public void validateLot(Lot lot) {
-
-        if (lot.getNumber() == null || lot.getNumber().trim().equals("")) {
-            throw new BusinessRuleException("Lot inválido.");
-        }
-        if (lot.getExpirationDate() == null) {
-            throw new BusinessRuleException("Data de válidade inválida.");
-        }
-        if (lot.getMerchandise() == null || !merchandiseRepository.existsById(lot.getMerchandise().getId())) {
-            throw new BusinessRuleException("Mercadoria inválida");
-        }
-        if (lot.getUnits() < 0) {
-            throw new BusinessRuleException("Número de unidades inválido.");
-        }
-
-    }
-
-    @Transactional
-    public Lot saveLot(Lot lot) {
-        validateLot(lot);
-        return lotRepository.save(lot);
-    }
-
-    @Transactional
-    public Lot updateLot(Lot lot) {
-        if (!lotRepository.existsById(lot.getId())) {
-            throw new BusinessRuleException("Lot com id inválido.");
-        }
-        validateLot(lot);
-        return lotRepository.save(lot);
-    }
-
-    public Optional<Lot> getLotById(Long id) {
-        Optional<Lot> lot = lotRepository.findById(id);
-        if (lot.isEmpty()) {
-            throw new BusinessRuleException("Lote com id inválido.");
-        }
-        return lot;
     }
 
     public Page<Lot> getLot(Pageable pageable) {
@@ -99,10 +57,31 @@ public class LotService {
         return lotRepository.findLotsExpiringWithinNDays(now, endDate, pageable);
     }
 
+    public Optional<Lot> getLotById(Long id) {
+        Optional<Lot> lot = lotRepository.findById(id);
+        if (lot.isEmpty()) {
+            throw new NotFoundException("Lote com id inválido.");
+        }
+        return lot;
+    }
+
+    @Transactional
+    public Lot saveLot(Lot lot) {
+        return lotRepository.save(lot);
+    }
+
+    @Transactional
+    public Lot updateLot(Lot lot) {
+        if (!lotRepository.existsById(lot.getId())) {
+            throw new NotFoundException("Lot com id inválido.");
+        }
+        return lotRepository.save(lot);
+    }
+
     @Transactional
     public void deleteLot(Long id) {
         if (!lotRepository.existsById(id)) {
-            throw new BusinessRuleException("Lote com id inválido.");
+            throw new NotFoundException("Lote com id inválido.");
         }
         lotRepository.deleteById(id);
     }

@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,9 +54,9 @@ public class SaleService{
     }
 
     @Transactional
-    public void saveSale(Sale sale, List<SaleItem> saleItems) {
+    public Sale saveSale(Sale sale, List<SaleItem> saleItems) {
         validateSale(sale);
-        sale.setSaleDate(LocalDate.now());
+        sale.setSaleDate(LocalDateTime.now());
 
         Sale saleSaved = saleRepository.save(sale);
 
@@ -64,15 +64,8 @@ public class SaleService{
             saleItem.setSale(saleSaved);
             saleItemService.saveSaleItem(saleItem);
         }
-    }
 
-    @Transactional
-    public void updateSale(Sale sale) {
-        if (!saleRepository.existsById(sale.getId())) {
-            throw new BusinessRuleException("A venda que está tentando modificar não está cadastrada.");
-        }
-        validateSale(sale);
-        saleRepository.save(sale);
+        return saleSaved;
     }
 
     public Page<Sale> getSale(Pageable pageable) {

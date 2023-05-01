@@ -1,11 +1,12 @@
 package com.bcipriano.pharmacysystem.service;
 
 import com.bcipriano.pharmacysystem.exception.BusinessRuleException;
+import com.bcipriano.pharmacysystem.exception.NotFoundException;
 import com.bcipriano.pharmacysystem.model.entity.SaleItem;
 import com.bcipriano.pharmacysystem.model.repository.LotRepository;
 import com.bcipriano.pharmacysystem.model.repository.SaleItemRepository;
 import com.bcipriano.pharmacysystem.model.repository.SaleRepository;
-import com.bcipriano.pharmacysystem.service.SaleItemService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,48 +32,43 @@ public class SaleItemService {
         this.lotRepository = lotRepository;
     }
 
-
-    public static void validateSaleItem(SaleItem saleItem, LotRepository lotRepository) {
-
-        if (saleItem.getUnits() < 0) {
-            throw new BusinessRuleException("Valor inválido para o número de unidades");
-        }
-        if (saleItem.getSellPrice() < 0) {
-            throw new BusinessRuleException("Valor inválido para o valor de venda.");
-        }
-        if (saleItem.getLot() == null || !lotRepository.existsById(saleItem.getLot().getId())) {
-            throw new BusinessRuleException("Lote inválido.");
-        }
-
-    }
-
     @Transactional
     public SaleItem saveSaleItem(SaleItem saleItem) {
         if (!saleRepository.existsById(saleItem.getSale().getId())) {
-            throw new BusinessRuleException("Esse item não pertence a um venda cadastrada.");
+            throw new NotFoundException("Venda com ID inválido.");
         }
-        if (saleItem.getId() != null && saleItemRepository.existsById(saleItem.getId())) {
-            throw new BusinessRuleException("Já existe item venda cadastrada com esse id");
+        if (saleItem.getUnits() < 0 || saleItem.getUnits() == null) {
+            throw new BusinessRuleException("Valor inválido para o número de unidades");
         }
-        SaleItemService.validateSaleItem(saleItem, lotRepository);
+        Integer availableUnits = saleItem.getLot().getUnits() - saleItem.getUnits();
+        if (availableUnits < 0) {
+            throw new BusinessRuleException("Número de itens inválido para o lote nº " + saleItem.getLot().getNumber() + " de " + saleItem.getLot().getMerchandise().getName());
+        }
+
         lotRepository.subtractUnitsFromLot(saleItem.getLot().getId(), saleItem.getUnits());
+
+        Double sellPrice = 0D;
+        if (saleItem.getLot().getMerchandise().getDiscountGroup() != null) {
+            sellPrice = priceCalculator(saleItem.getLot().getMerchandise().getFullPrice(), saleItem.getLot().getMerchandise().getDiscountGroup().getPercentage());
+            Double unitsCast = saleItem.getUnits().doubleValue();
+            sellPrice = sellPrice * unitsCast;
+        } else {
+            Double unitsCast = saleItem.getUnits().doubleValue();
+            sellPrice = (saleItem.getLot().getMerchandise().getFullPrice() * unitsCast);
+        }
+        saleItem.setSellPrice(sellPrice);
         return saleItemRepository.save(saleItem);
     }
 
     @Transactional
     public SaleItem updateSaleItem(SaleItem saleItem) {
-        if (!saleRepository.existsById(saleItem.getSale().getId())) {
-            throw new BusinessRuleException("Esse item não pertence a um venda cadastrada.");
+        Optional<SaleItem> saleItemLoaded = saleItemRepository.findById(saleItem.getId());
+        if(saleItemLoaded.isEmpty()){
+            throw new BusinessRuleException("Item venda com ID inválido.");
         }
-        if (!saleItemRepository.existsById(saleItem.getId())) {
-            throw new BusinessRuleException("O item que está tentando modificar não está cadastrado no sistema");
-        }
-        SaleItemService.validateSaleItem(saleItem, lotRepository);
-        return saleItemRepository.save(saleItem);
-    }
-
-    public List<SaleItem> getSaleItems() {
-        return saleItemRepository.findAll();
+        SaleItem saleItemUpdated = saleItemLoaded.get();
+        saleItemUpdated.setUnits(saleItem.getUnits());
+        return saleItemRepository.save(saleItemUpdated);
     }
 
     public List<SaleItem> getSaleItemBySaleId(Long saleId) {
@@ -94,11 +90,18 @@ public class SaleItemService {
         return saleItemRepository.findSaleItemByLotId(lotId);
     }
 
+
+    public Double priceCalculator(Double merchandisePrice, Double discountPercentage) {
+        Double result = merchandisePrice;
+        result -= merchandisePrice * (discountPercentage / 100);
+        return result;
+    }
+
     public void deleteSaleItem(SaleItem saleItem) {
         if (!saleItemRepository.existsById(saleItem.getId())) {
             throw new BusinessRuleException("Item venda com id inválido.");
         }
-        if(!lotRepository.existsById(saleItem.getLot().getId())) {
+        if (!lotRepository.existsById(saleItem.getLot().getId())) {
             throw new BusinessRuleException("Lot com Id inválido.");
         }
 
