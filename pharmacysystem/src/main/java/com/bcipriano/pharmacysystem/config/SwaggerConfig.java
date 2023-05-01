@@ -1,5 +1,8 @@
 package com.bcipriano.pharmacysystem.config;
 
+import com.bcipriano.pharmacysystem.api.dto.saleDTO.SaleReadDTO;
+import com.bcipriano.pharmacysystem.api.dto.saleItemDTO.SaleItemReadDTO;
+import com.bcipriano.pharmacysystem.api.dto.saleItemDTO.SaleItemWriteDTO;
 import com.bcipriano.pharmacysystem.model.entity.*;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.swagger.web.OperationsSorter;
@@ -42,7 +45,9 @@ public class SwaggerConfig {
                         Return.class,
                         Sale.class,
                         SaleItem.class,
-                        Supplier.class
+                        Supplier.class,
+                        SaleItemReadDTO.class,
+                        SaleReadDTO.class
                 );
     }
 

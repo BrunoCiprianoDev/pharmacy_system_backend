@@ -116,7 +116,7 @@ public class DiscountGroupController {
     })
     public ResponseEntity<List<DiscountGroupDTO>> getByFinalDate(
             @ApiParam(value = "Final date (YYYY_MM_DD)")
-            @RequestParam("startDate") String finalDate,
+            @RequestParam("finalDate") String finalDate,
             @ApiParam(value = "The page number to be returned (starting at 0)", defaultValue = "0")
             @RequestParam(defaultValue = "0") int page,
             @ApiParam(value = "The maximum number of discount groups to be returned in a page", defaultValue = "10")
