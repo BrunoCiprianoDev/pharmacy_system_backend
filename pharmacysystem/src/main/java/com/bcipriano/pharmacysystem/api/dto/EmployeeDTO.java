@@ -83,8 +83,8 @@ public class EmployeeDTO {
         ModelMapper modelMapper = new ModelMapper();
         EmployeeDTO employeeDTO = modelMapper.map(employee, EmployeeDTO.class);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        employeeDTO.birthDate = employee.getBirthDate().format(formatter);
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        //employeeDTO.birthDate = employee.getBirthDate();
 
         employeeDTO.cep = employee.getAddress().getCep();
         employeeDTO.uf = employee.getAddress().getUf();

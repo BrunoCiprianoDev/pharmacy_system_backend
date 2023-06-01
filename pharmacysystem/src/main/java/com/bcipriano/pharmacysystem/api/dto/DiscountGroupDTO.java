@@ -53,11 +53,6 @@ public class DiscountGroupDTO {
 
         ModelMapper modelMapper = new ModelMapper();
         DiscountGroupDTO discountGroupDTO = modelMapper.map(discountGroup, DiscountGroupDTO.class);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        discountGroupDTO.startDate = discountGroup.getStartDate().format(formatter);
-        discountGroupDTO.finalDate = discountGroup.getFinalDate().format(formatter);
-
         return discountGroupDTO;
     }
 

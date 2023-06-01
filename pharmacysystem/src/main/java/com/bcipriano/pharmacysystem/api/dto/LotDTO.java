@@ -47,18 +47,18 @@ public class LotDTO {
     private Merchandise merchandise;
 
     @ApiModelProperty(hidden = true)
-    private String noteNumberPurchase;
+    private String noteNumber;
+
+    private String merchandiseName;
 
     public static LotDTO create(Lot lot) {
         ModelMapper modelMapper = new ModelMapper();
         LotDTO lotDto = modelMapper.map(lot, LotDTO.class);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        lotDto.expirationDate = lot.getExpirationDate().format(formatter);
-
         lotDto.purchaseId = lot.getPurchase().getId();
         lotDto.merchandiseId = lot.getMerchandise().getId();
-        lotDto.noteNumberPurchase = lot.getPurchase().getNoteNumber();
+        lotDto.noteNumber = lot.getPurchase().getNoteNumber();
+        lotDto.merchandiseName = lot.getMerchandise().getName();
         return lotDto;
     }
 

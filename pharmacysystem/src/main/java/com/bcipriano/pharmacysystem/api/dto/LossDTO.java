@@ -49,6 +49,9 @@ public class LossDTO {
     @NotBlank(message = "Insira uma descrição")
     private String description;
 
+    @ApiModelProperty(value = "Merchandise name", example = "Product Name")
+    private String merchandiseName;
+
     public static LossDTO create(Loss loss) {
         ModelMapper modelMapper = new ModelMapper();
         LossDTO dto = modelMapper.map(loss, LossDTO.class);
@@ -56,6 +59,7 @@ public class LossDTO {
         dto.employeeId = loss.getEmployee().getId();
         dto.employeeName = loss.getEmployee().getName();
         dto.lotNumber = loss.getLot().getNumber();
+        dto.merchandiseName = loss.getLot().getMerchandise().getName();
         return dto;
     }
 }

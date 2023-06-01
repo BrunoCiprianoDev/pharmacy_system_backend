@@ -23,12 +23,18 @@ public class SaleItemReadDTO {
 
     private String lotNumber;
 
+    private String merchandiseName;
+
+    private double discountPrice;
+
     public static SaleItemReadDTO create(SaleItem saleItem){
         ModelMapper modelMapper = new ModelMapper();
         SaleItemReadDTO dto = modelMapper.map(saleItem, SaleItemReadDTO.class);
         dto.saleId = saleItem.getSale().getId();
         dto.lotId = saleItem.getLot().getId();
         dto.lotNumber = saleItem.getLot().getNumber();
+        dto.merchandiseName = saleItem.getLot().getMerchandise().getName();
+        dto.discountPrice = saleItem.getLot().getMerchandise().getFullPrice();
         return dto;
     }
 }

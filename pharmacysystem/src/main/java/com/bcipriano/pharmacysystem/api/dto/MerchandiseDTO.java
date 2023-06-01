@@ -83,6 +83,9 @@ public class MerchandiseDTO {
     @ApiModelProperty(value = "Discount group ID", example = "1 (Long)")
     private Long discountGroupId;
 
+    @ApiModelProperty(value = "Discount group name", example = "Discount Group")
+    private String discountGroupName;
+
     private DiscountGroup discountGroup;
 
     public static MerchandiseDTO create(Merchandise merchandise) {
@@ -92,6 +95,7 @@ public class MerchandiseDTO {
 
         if (merchandise.getDiscountGroup() != null) {
             merchandiseDTO.discountGroupId = merchandise.getDiscountGroup().getId();
+            merchandiseDTO.discountGroupName = merchandise.getDiscountGroup().getName();
         }
 
         return merchandiseDTO;

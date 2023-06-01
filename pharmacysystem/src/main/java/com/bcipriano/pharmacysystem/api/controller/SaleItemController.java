@@ -58,7 +58,7 @@ public class SaleItemController {
     })
     public ResponseEntity<List<SaleItemReadDTO>> getSaleItemsBySaleId(
             @ApiParam(value = "The details of the sale to create", required = true)
-            @PathVariable("saleId") Long saleId) {
+            @PathVariable("id") Long saleId) {
         List<SaleItem> saleItemList = saleItemService.getSaleItemBySaleId(saleId);
         return ResponseEntity.ok(saleItemList.stream().map(SaleItemReadDTO::create).collect(Collectors.toList()));
     }
