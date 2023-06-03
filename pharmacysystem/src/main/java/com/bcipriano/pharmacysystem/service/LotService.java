@@ -40,8 +40,8 @@ public class LotService {
         return lotRepository.findLotsByMerchandiseId(merchandiseId, pageable);
     }
 
-    public Page<Lot> getLotsByPurchaseNoteNumber(String query, Pageable pageable) {
-        return lotRepository.findLotsByLotNumber(query, pageable);
+    public Page<Lot> getLotsByMerchandiseName(String query, Pageable pageable) {
+        return lotRepository.findLotsByMerchandiseName(query, pageable);
     }
 
     public Integer getCurrentStockByMerchandiseId(Long merchandiseId) {

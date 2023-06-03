@@ -26,6 +26,9 @@ public interface LotRepository extends JpaRepository<Lot, Long> {
     @Query("SELECT l FROM Lot l WHERE l.number LIKE %:query%")
     Page<Lot> findLotsByLotNumber(@Param("query") String query, Pageable pageable);
 
+    @Query("SELECT l FROM Lot l WHERE l.merchandise.name LIKE %:query%")
+    Page<Lot> findLotsByMerchandiseName(@Param("query") String query, Pageable pageable);
+
     Page<Lot>findByExpirationDate(LocalDate startDate, Pageable pageable);
 
     @Query("SELECT SUM(l.units) FROM Lot l WHERE l.merchandise.id = :merchandiseId")

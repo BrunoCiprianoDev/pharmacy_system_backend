@@ -86,7 +86,7 @@ public class LotController {
     ) {
         Sort.Direction direction = sortDirection.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, direction, sortBy);
-        Page<Lot> lotPage = lotService.getLotsByPurchaseNoteNumber(query, pageable);
+        Page<Lot> lotPage = lotService.getLotsByMerchandiseName(query, pageable);
         return ResponseEntity.ok(lotPage.stream().map(LotDTO::create).collect(Collectors.toList()));
     }
 
