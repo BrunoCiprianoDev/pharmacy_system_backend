@@ -75,11 +75,6 @@ public class ClientDTO {
 
         ModelMapper modelMapper = new ModelMapper();
         ClientDTO clientDTO = modelMapper.map(client, ClientDTO.class);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        clientDTO.birthDate = client.getBirthDate().format(formatter);
-
         clientDTO.cep = client.getAddress().getCep();
         clientDTO.uf = client.getAddress().getUf();
         clientDTO.city = client.getAddress().getCity();
