@@ -30,6 +30,8 @@ public class SaleReadDTO {
 
     private String clientCpf;
 
+    private double total;
+
     private List<SaleItemReadDTO> saleItems;
 
     public static SaleReadDTO create(Sale sale, List<SaleItem> saleItems){
@@ -46,9 +48,12 @@ public class SaleReadDTO {
         }
 
         List<SaleItemReadDTO> saleItemReadDTOList = new ArrayList<>();
+        double total = 0d;
         for(SaleItem saleItem : saleItems) {
             saleItemReadDTOList.add(SaleItemReadDTO.create(saleItem));
+            total += saleItem.getUnits() * saleItem.getSellPrice();
         }
+        dto.total = total;
         dto.setSaleItems(saleItemReadDTOList);
 
         return dto;
