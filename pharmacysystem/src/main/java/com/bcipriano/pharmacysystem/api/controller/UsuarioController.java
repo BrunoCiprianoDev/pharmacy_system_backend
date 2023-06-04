@@ -39,7 +39,8 @@ public class UsuarioController {
                     .senha(credenciais.getSenha()).build();
             UserDetails usuarioAutenticado = usuarioService.autenticar(usuario);
             String token = jwtService.gerarToken(usuario);
-            return new TokenDTO(usuario.getLogin(), token);
+
+            return new TokenDTO(usuario.getLogin(), token, usuario.isAdmin() ? "manager" : "employee");
         } catch (UsernameNotFoundException | InvalidPasswordException e ){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }

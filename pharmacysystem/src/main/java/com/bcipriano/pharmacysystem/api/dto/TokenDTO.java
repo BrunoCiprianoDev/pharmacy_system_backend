@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 public class TokenDTO {
     private String login;
     private String token;
+    private String rule;
 }
