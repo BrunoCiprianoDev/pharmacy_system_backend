@@ -28,6 +28,7 @@ public class UsuarioController {
     public Usuario salvar(@RequestBody Usuario usuario ){
         String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
         usuario.setSenha(senhaCriptografada);
+        System.out.println(usuario.isAdmin());
         return usuarioService.salvar(usuario);
     }
 
@@ -40,7 +41,13 @@ public class UsuarioController {
             UserDetails usuarioAutenticado = usuarioService.autenticar(usuario);
             String token = jwtService.gerarToken(usuario);
 
-            return new TokenDTO(usuario.getLogin(), token, "manager");
+            String rule = usuarioAutenticado
+                    .getAuthorities()
+                    .toArray()[0]
+                    .toString()
+                    .equals("ROLE_ADMIN") ? "manager" : "employee";
+
+            return new TokenDTO(usuario.getLogin(), token, rule);
         } catch (UsernameNotFoundException | InvalidPasswordException e ){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
