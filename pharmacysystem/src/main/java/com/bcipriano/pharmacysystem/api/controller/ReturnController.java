@@ -38,7 +38,7 @@ public class ReturnController {
 
     private final SaleItemService saleItemService;
 
-    @GetMapping
+    @GetMapping("/search")
     @ApiOperation(value = "Returns all returned items registered in the system.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Returns a paginated list of returns"),
