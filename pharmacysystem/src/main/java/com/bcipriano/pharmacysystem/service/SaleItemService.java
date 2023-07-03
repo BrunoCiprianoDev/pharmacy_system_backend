@@ -93,7 +93,7 @@ public class SaleItemService {
 
     public Double priceCalculator(Double merchandisePrice, Double discountPercentage) {
         Double result = merchandisePrice;
-        result -= merchandisePrice * (discountPercentage / 100);
+        result = merchandisePrice - (merchandisePrice * (discountPercentage / 100));
         return result;
     }
 

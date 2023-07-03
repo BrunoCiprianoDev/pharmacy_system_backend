@@ -47,6 +47,8 @@ public class UsuarioController {
                     .toString()
                     .equals("ROLE_ADMIN") ? "manager" : "employee";
 
+            System.out.println(usuario);
+
             return new TokenDTO(usuario.getLogin(), token, rule);
         } catch (UsernameNotFoundException | InvalidPasswordException e ){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());

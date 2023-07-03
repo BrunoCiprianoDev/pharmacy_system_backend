@@ -33,4 +33,12 @@ public class SaleItem {
     @JoinColumn(name = "id_lot")
     private Lot lot;
 
+    @Transient
+    private double totalItem;
+
+    @PostLoad
+    public void inicializaCampoCalculado() {
+        this.totalItem = this.sellPrice * this.units;
+    }
+
 }
