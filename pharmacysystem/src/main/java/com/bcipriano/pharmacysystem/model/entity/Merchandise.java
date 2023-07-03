@@ -66,5 +66,4 @@ public class Merchandise {
     @ManyToOne
     @JoinColumn(name = "id_discount_group")
     private DiscountGroup discountGroup;
-
 }

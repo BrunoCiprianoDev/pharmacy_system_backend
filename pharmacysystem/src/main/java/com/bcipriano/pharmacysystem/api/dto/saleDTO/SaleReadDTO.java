@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,9 @@ public class SaleReadDTO {
         ModelMapper modelMapper = new ModelMapper();
         SaleReadDTO dto = modelMapper.map(sale, SaleReadDTO.class);
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        dto.saleDate = sale.getSaleDate().format(formatter);
+
         dto.employeeId = sale.getEmployee().getId();
         dto.employeeName = sale.getEmployee().getName();
 
@@ -45,6 +49,10 @@ public class SaleReadDTO {
             dto.clientId = sale.getClient().getId();
             dto.clientName = sale.getClient().getName();
             dto.clientCpf = sale.getClient().getCpf();
+        } else {
+            dto.clientName = "Não informado.";
+            dto.clientCpf = " ";
+
         }
 
         List<SaleItemReadDTO> saleItemReadDTOList = new ArrayList<>();

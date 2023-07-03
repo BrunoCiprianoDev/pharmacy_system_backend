@@ -59,6 +59,7 @@ public class LotDTO {
         lotDto.merchandiseId = lot.getMerchandise().getId();
         lotDto.noteNumber = lot.getPurchase().getNoteNumber();
         lotDto.merchandiseName = lot.getMerchandise().getName();
+
         return lotDto;
     }
 

@@ -1,6 +1,8 @@
 package com.bcipriano.pharmacysystem.api.dto.saleItemDTO;
 
 import com.bcipriano.pharmacysystem.model.entity.SaleItem;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,7 @@ public class SaleItemReadDTO {
 
     private Integer units;
 
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_FLOAT, pattern = "0.00")
     private Double sellPrice;
 
     private Long saleId;
@@ -25,6 +28,7 @@ public class SaleItemReadDTO {
 
     private String merchandiseName;
 
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_FLOAT, pattern = "0.00")
     private double totalItem;
 
     public static SaleItemReadDTO create(SaleItem saleItem){

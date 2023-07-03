@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 @Entity
 @Table(name = "sale_item", schema = "management")
@@ -38,7 +40,7 @@ public class SaleItem {
 
     @PostLoad
     public void inicializaCampoCalculado() {
-        this.totalItem = this.sellPrice * this.units;
+        double result = this.sellPrice * this.units;
     }
 
 }
